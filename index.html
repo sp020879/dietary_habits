@@ -110,7 +110,7 @@ body {
 .input-group label { font-size:10px; color:var(--text3); letter-spacing:0.05em; }
 .input-group input, .input-group select {
   background:var(--surface2); border:1px solid var(--border); border-radius:9px;
-  padding:11px 12px; font-size:14px; color:var(--text);
+  padding:13px 14px; font-size:16px; color:var(--text);
   font-family:'Noto Sans TC',sans-serif; outline:none;
   transition:border-color 0.2s; width:100%;
   -webkit-appearance:none;
@@ -401,7 +401,7 @@ body {
     <div id="loginMsg" style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5"></div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" onclick="this.classList.remove('show')"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 // ════════════════════════════════════════════════════
@@ -720,10 +720,12 @@ function showPage(name,btn){
   if(name==='history') renderHistory();
   if(name==='stats') renderStats();
 }
+let _toastTimer=null;
 function showToast(msg){
   const t=document.getElementById('toast'); t.textContent=msg;
-  t.classList.add('show'); clearTimeout(window._tt);
-  window._tt=setTimeout(()=>t.classList.remove('show'),4000);
+  t.classList.add('show');
+  if(_toastTimer) clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
 }
 
 // ════════ SUPABASE 雲端同步 ════════
@@ -809,8 +811,14 @@ async function pushDelete(id){
     if(error) throw error;
   }catch(e){ enqueue({type:'delete',id}); updateSyncBadge('待同步'); }
 }
+let _syncing=false;
 async function syncNow(){
   if(!(sb&&user)){ if(configured()) showLogin(); return; }
+  if(_syncing) return;
+  _syncing=true;
+  try{ await _doSync(); } finally { _syncing=false; }
+}
+async function _doSync(){
   updateSyncBadge('同步中');
   // 1. 清空待同步佇列
   const q=getOutbox(); const remain=[];
@@ -862,6 +870,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   init();
   document.getElementById('foodInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); addToPending(); } });
 });
+// 回到 App / 切回前景時，自動拉雲端最新資料（達成跨裝置同步）
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden && sb && user) syncNow(); });
+window.addEventListener('focus',()=>{ if(sb && user) syncNow(); });
 </script>
 </body>
 </html>
