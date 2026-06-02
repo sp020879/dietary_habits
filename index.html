@@ -95,7 +95,6 @@ body {
 }
 .s-title::before { content:''; width:3px; height:15px; background:var(--accent); border-radius:2px; display:block; }
 .hint { font-size:11px; color:var(--text3); line-height:1.55; margin:6px 0 12px; }
-/* QUICK PILLS */
 .quick-wrap { margin-bottom:14px; }
 .quick-label { font-size:10px; color:var(--text3); letter-spacing:0.06em; margin-bottom:7px; }
 .quick-scroll { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
@@ -107,7 +106,6 @@ body {
   font-family:'Noto Sans TC',sans-serif; border:none;
 }
 .quick-pill:active { background:var(--accent); color:white; transform:scale(0.95); }
-/* INPUTS */
 .input-group { display:flex; flex-direction:column; gap:4px; }
 .input-group label { font-size:10px; color:var(--text3); letter-spacing:0.05em; }
 .input-group input, .input-group select {
@@ -118,15 +116,12 @@ body {
   -webkit-appearance:none;
 }
 .input-group input:focus,.input-group select:focus { border-color:var(--accent); }
-/* BUTTONS */
 .btn { border:none; border-radius:10px; padding:12px 20px; font-size:14px; cursor:pointer; font-family:'Noto Sans TC',sans-serif; transition:all 0.2s; }
 .btn-primary { background:var(--text); color:var(--bg); width:100%; }
 .btn-primary:active { background:var(--accent); transform:scale(0.98); }
-/* PENDING LIST */
 .pending-empty { font-size:12px; color:var(--text3); text-align:center; padding:16px 0; }
 .pending-row { display:flex; align-items:center; gap:9px; padding:10px 0; border-bottom:1px solid var(--border); animation:slideIn 0.2s ease; }
 .pending-row:last-child { border-bottom:none; }
-/* FOOD LOG */
 .food-log { background:var(--surface); border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--border); overflow:hidden; }
 .meal-section { border-bottom:1px solid var(--border); }
 .meal-section:last-child { border-bottom:none; }
@@ -160,7 +155,6 @@ body {
 .empty { padding:40px 16px; text-align:center; color:var(--text3); }
 .empty-icon { font-size:36px; margin-bottom:10px; }
 .empty p { font-size:13px; line-height:1.6; }
-/* HISTORY */
 .date-nav {
   background:var(--surface); border-radius:12px; padding:14px 16px;
   display:flex; align-items:center; justify-content:space-between;
@@ -174,7 +168,6 @@ body {
 .h-card { background:var(--surface); border-radius:12px; padding:14px; border:1px solid var(--border); box-shadow:var(--shadow); }
 .h-val { font-family:'DM Serif Display',serif; font-size:24px; color:var(--accent); }
 .h-label { font-size:10px; color:var(--text2); margin-top:3px; }
-/* STATS */
 .week-bar-wrap { background:var(--surface); border-radius:14px; padding:18px; border:1px solid var(--border); box-shadow:var(--shadow); margin-bottom:18px; }
 .week-bars { display:flex; align-items:flex-end; gap:8px; height:80px; margin-top:14px; }
 .wbar-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:4px; height:100%; justify-content:flex-end; }
@@ -189,7 +182,6 @@ body {
 .freq-count { font-size:12px; color:var(--text3); }
 .freq-bar-track { flex:2; height:4px; background:var(--surface2); border-radius:2px; overflow:hidden; }
 .freq-bar-fill { height:100%; background:var(--accent2); border-radius:2px; }
-/* TIPS */
 .tips-hero {
   background:linear-gradient(135deg,#2d2a25,#3d3830);
   border-radius:14px; padding:22px; margin-bottom:18px; color:var(--bg);
@@ -202,7 +194,6 @@ body {
 .rating-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:3px; }
 .rating-title { font-size:13px; font-weight:500; margin-bottom:2px; }
 .rating-foods { font-size:11px; color:var(--text3); line-height:1.5; }
-/* TOAST */
 .toast {
   position:fixed; bottom:calc(var(--safe-bottom) + 70px); left:50%;
   transform:translateX(-50%) translateY(80px);
@@ -212,7 +203,6 @@ body {
   box-shadow:0 4px 20px rgba(0,0,0,0.2);
 }
 .toast.show { transform:translateX(-50%) translateY(0); }
-/* MODAL */
 .modal-overlay {
   position:fixed; inset:0; background:rgba(0,0,0,0.45);
   z-index:200; display:none; align-items:flex-end;
@@ -234,7 +224,10 @@ body {
     <div class="nav-title">飲食日記</div>
     <div class="nav-date" id="todayLabel"></div>
   </div>
-  <button class="nav-btn" onclick="showAddModal()">＋</button>
+  <div style="display:flex;align-items:center;gap:4px">
+    <button class="nav-btn" id="syncBtn" onclick="syncNow()" title="同步" style="font-size:16px;display:none">☁</button>
+    <button class="nav-btn" onclick="showAddModal()">＋</button>
+  </div>
 </div>
 <div class="pages">
   <!-- TODAY -->
@@ -332,6 +325,14 @@ body {
           <div><div class="rating-title">建議避免</div><div class="rating-foods">冰飲冷食、炸物、手搖飲、加工肉品、大量乳製品</div></div>
         </div>
       </div>
+      <div class="s-title" style="margin-top:18px">帳號與雲端同步</div>
+      <div class="rating-card">
+        <div id="accountInfo" style="font-size:13px;color:var(--text2);line-height:1.6">尚未設定雲端同步（資料只存這台手機）</div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn" id="loginBtn" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);flex:1;display:none" onclick="showLogin()">登入雲端</button>
+          <button class="btn" id="logoutBtn" style="background:var(--surface2);color:var(--text2);border:1px solid var(--border);flex:1;display:none" onclick="doLogout()">登出</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -379,8 +380,37 @@ body {
     <button class="btn btn-primary" style="margin-top:6px" onclick="saveMeal()">完成，加入今日記錄</button>
   </div>
 </div>
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="loginModal" onclick="if(event.target===this)this.classList.remove('show')">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="s-title" style="margin-bottom:6px">雲端同步登入</div>
+    <div class="hint" style="margin-bottom:14px">輸入 email 取得 6 位數驗證碼，輸入後即可登入。資料會自動同步、換手機也看得到。</div>
+    <div class="input-group" style="margin-bottom:12px">
+      <label>Email</label>
+      <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <button class="btn btn-primary" onclick="sendCode()">寄送驗證碼</button>
+    <div id="codeWrap" style="display:none;margin-top:14px">
+      <div class="input-group" style="margin-bottom:12px">
+        <label>驗證碼</label>
+        <input type="text" id="loginCode" inputmode="numeric" placeholder="6 位數字">
+      </div>
+      <button class="btn btn-primary" onclick="verifyCode()">驗證並登入</button>
+    </div>
+    <div id="loginMsg" style="font-size:11px;color:var(--text3);text-align:center;margin-top:12px;line-height:1.5"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ════════════════════════════════════════════════════
+//  雲端同步設定 — 部署 Supabase 後把這兩個值填進來
+//  兩個都留空 = 純本機模式（不需登入、資料只存這台手機）
+// ════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://xzmugwhduswltmydzcxs.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_BjOgs6fhvzn1C3XYAFa0UA_eUG72R6O';
+
 // ── 食物資料庫（適合度 h + 體質說明 note）──
 const DB = {
   '溫薑茶':{h:'great',note:'每天必喝，暖胃護腸'},
@@ -454,26 +484,46 @@ const HS={great:5,good:4,ok:3,avoid:1};
 const HL={great:'非常適合',good:'適合',ok:'還可以',avoid:'建議避免'};
 const HB={great:'badge-great',good:'badge-good',ok:'badge-ok',avoid:'badge-avoid'};
 const HD={great:'dot-great',good:'dot-good',ok:'dot-ok',avoid:'dot-avoid'};
+
 let historyDate=new Date();
 let pending=[];
-// ── STORAGE ──
-function todayKey(){return 'fd_'+new Date().toISOString().slice(0,10);}
-function dateKey(d){return 'fd_'+d.toISOString().slice(0,10);}
-function loadFoods(key){try{return JSON.parse(localStorage.getItem(key)||'[]');}catch{return[];}}
-function saveFoods(key,data){
-  localStorage.setItem(key,JSON.stringify(data));
-  let idx=JSON.parse(localStorage.getItem('fd_index')||'[]');
-  const dk=key.replace('fd_','');
-  if(!idx.includes(dk)){idx.push(dk);idx.sort().reverse();localStorage.setItem('fd_index',JSON.stringify(idx));}
+let ENTRIES=[];        // 所有記錄（單一資料來源）
+let sb=null, user=null; // Supabase client / 登入者
+
+// ── 工具 ──
+const uuid=()=> (crypto.randomUUID? crypto.randomUUID() : 'x'+Date.now()+Math.random().toString(16).slice(2));
+const todayStr=()=> new Date().toISOString().slice(0,10);
+const dateStr=(d)=> d.toISOString().slice(0,10);
+function foodsByDay(day){ return ENTRIES.filter(e=>e.day===day); }
+function getAllDays(){ return [...new Set(ENTRIES.map(e=>e.day))]; }
+
+// ── 本機快取 + 待同步佇列 ──
+function cacheSave(){ localStorage.setItem('fd_cache', JSON.stringify(ENTRIES)); }
+function cacheLoad(){ try{ ENTRIES=JSON.parse(localStorage.getItem('fd_cache')||'[]'); }catch{ ENTRIES=[]; } }
+function getOutbox(){ try{ return JSON.parse(localStorage.getItem('fd_outbox')||'[]'); }catch{ return []; } }
+function setOutbox(q){ localStorage.setItem('fd_outbox', JSON.stringify(q)); }
+function enqueue(op){ const q=getOutbox(); q.push(op); setOutbox(q); }
+
+// 把舊版（fd_index + fd_日期）資料搬到新格式
+function migrateOld(){
+  if(localStorage.getItem('fd_cache')) return;
+  let idx=[]; try{ idx=JSON.parse(localStorage.getItem('fd_index')||'[]'); }catch{}
+  if(!idx.length) return;
+  const all=[];
+  idx.forEach(day=>{
+    let arr=[]; try{ arr=JSON.parse(localStorage.getItem('fd_'+day)||'[]'); }catch{}
+    arr.forEach(f=> all.push({id:uuid(), name:f.name, meal:f.meal, health:f.health, note:f.note||'', day, time:f.time||''}));
+  });
+  ENTRIES=all; cacheSave();
 }
-function getAllDates(){return JSON.parse(localStorage.getItem('fd_index')||'[]');}
+
 // ── 適合度判斷 ──
 function detectH(name){
   if(DB[name]) return DB[name].h;
   for(const k in DB){ if(name.includes(k)||k.includes(name)) return DB[k].h; }
   if(/薑|薑黃|木瓜|燕麥|優格|豆腐|鮭魚|蒸魚|芭樂|香蕉|地瓜|南瓜|味噌|雞湯|酪梨|燙/.test(name)) return 'great';
   if(/白飯|糙米|雞胸|雞腿|水煮蛋|荷包|魚|蝦|壽司|御飯糰|飯糰|酸種|吐司|豆漿|沙拉|生菜|青菜|蔬菜|玉米|蛋餅|蘋果|橘/.test(name)) return 'good';
-  if(/咖啡|拿鐵|美式|卡布|義大利麵|麵|河粉|滷肉飯|雞肉飯|披薩|芒果|西瓜|葡萄|牛奶|吐司/.test(name)) return 'ok';
+  if(/咖啡|拿鐵|美式|卡布|義大利麵|麵|河粉|滷肉飯|雞肉飯|披薩|芒果|西瓜|葡萄|牛奶/.test(name)) return 'ok';
   if(/冰|炸|鹹酥|薯條|炒飯|炒麵|手搖|珍奶|奶茶|汽水|可樂|蛋糕|巧克力|洋芋|泡麵|培根|香腸|打拋|咖哩/.test(name)) return 'avoid';
   return 'ok';
 }
@@ -486,6 +536,7 @@ function getCurrentMeal(){
   const h=new Date().getHours();
   if(h<10) return '早餐'; if(h<14) return '午餐'; if(h<18) return '點心'; return '晚餐';
 }
+
 // ── 多項輸入 ──
 function mkItem(name){ return {name, health:detectH(name), note:getNote(name)}; }
 function quickAdd(name){ pending.push(mkItem(name)); renderPending(); }
@@ -513,17 +564,19 @@ function renderPending(){
 function saveMeal(){
   if(!pending.length){ showToast('先加入至少一項食物'); return; }
   const meal=document.getElementById('mealSelect').value;
-  const key=todayKey(); const foods=loadFoods(key);
+  const day=todayStr();
   const time=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
+  const rows=pending.map(p=>({id:uuid(), name:p.name, meal, health:p.health, note:p.note, day, time}));
+  ENTRIES.push(...rows); cacheSave();
   const saved=[...pending];
-  saved.forEach((p,i)=>foods.push({id:Date.now()+i,name:p.name,meal,health:p.health,note:p.note,time}));
-  saveFoods(key,foods);
   pending=[]; renderPending();
   document.getElementById('foodInput').value='';
   hideAddModal(); renderToday(); renderStats();
   showToast(buildMealFeedback(saved, meal));
+  pushInsert(rows);
 }
-// ── 朋友式回饋（本地產生，看食物 + 時間）──
+
+// ── 朋友式回饋（本地產生）──
 function buildMealFeedback(items, meal){
   const hour=new Date().getHours();
   const avoids=items.filter(x=>x.health==='avoid');
@@ -545,8 +598,9 @@ function buildMealFeedback(items, meal){
   const pool=['🙂 這餐挑得挺穩的，吃得舒服最重要','✅ 看起來都還不錯，記得細嚼慢嚥','😌 OK的一餐，慢慢吃別急'];
   return pool[Math.floor(Math.random()*pool.length)];
 }
+
 // ── 食物清單渲染 ──
-function renderFoodList(foods, container, key){
+function renderFoodList(foods, container){
   if(!foods.length){
     container.innerHTML='<div class="empty"><div class="empty-icon">🍽️</div><p>這天沒有記錄</p></div>';
     return;
@@ -563,7 +617,7 @@ function renderFoodList(foods, container, key){
         <div class="food-info"><div class="food-name">${f.name}</div><div class="food-meta">${f.time} · ${f.note}</div></div>
         <div class="food-right">
           <span class="hbadge ${HB[f.health]}">${HL[f.health]}</span>
-          <button class="del-btn" onclick="deleteFood('${key}',${f.id})">×</button>
+          <button class="del-btn" onclick="deleteFood('${f.id}')">×</button>
         </div>
       </div>`;
     });
@@ -584,10 +638,9 @@ function updateRing(score){
   const c=score>=80?'var(--green)':score>=60?'var(--accent2)':score>=40?'var(--yellow)':'var(--red)';
   arc.style.stroke=c; sv.style.color=c;
 }
-// ── TODAY ──
 function renderToday(){
-  const key=todayKey(); const foods=loadFoods(key);
-  renderFoodList(foods, document.getElementById('todayLog'), key);
+  const foods=foodsByDay(todayStr());
+  renderFoodList(foods, document.getElementById('todayLog'));
   updateRing(calcScore(foods));
   document.getElementById('foodCount').textContent=foods.length;
   const ms=[...new Set(foods.map(f=>f.meal))];
@@ -597,28 +650,25 @@ function renderToday(){
   document.getElementById('fitCount').textContent=fit;
   document.getElementById('avoidStatus').textContent=avoid?avoid+' 項要注意':(foods.length?'沒有踩雷 👍':'—');
 }
-// ── HISTORY ──
 function renderHistory(){
-  const key=dateKey(historyDate);
   document.getElementById('historyDateLabel').textContent=historyDate.toLocaleDateString('zh-TW',{year:'numeric',month:'long',day:'numeric',weekday:'short'});
-  const foods=loadFoods(key);
+  const foods=foodsByDay(dateStr(historyDate));
   document.getElementById('hScore').textContent=calcScore(foods)||'—';
   document.getElementById('hCount').textContent=foods.length||'—';
-  renderFoodList(foods, document.getElementById('historyLog'), key);
+  renderFoodList(foods, document.getElementById('historyLog'));
 }
 function historyPrev(){ historyDate.setDate(historyDate.getDate()-1); renderHistory(); }
 function historyNext(){
   const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   if(historyDate<tomorrow){ historyDate.setDate(historyDate.getDate()+1); renderHistory(); }
 }
-// ── STATS ──
 function renderStats(){
   const days=['一','二','三','四','五','六','日'];
   const today=new Date();
   const weekData=[];
   for(let i=6;i>=0;i--){
     const d=new Date(today); d.setDate(d.getDate()-i);
-    const score=calcScore(loadFoods(dateKey(d)));
+    const score=calcScore(foodsByDay(dateStr(d)));
     const dow=d.getDay();
     weekData.push({label:days[dow===0?6:dow-1],score});
   }
@@ -632,7 +682,7 @@ function renderStats(){
     </div>`;
   }).join('');
   const freq={};
-  getAllDates().forEach(dk=>{ loadFoods('fd_'+dk).forEach(f=>{ freq[f.name]=(freq[f.name]||0)+1; }); });
+  ENTRIES.forEach(e=>{ freq[e.name]=(freq[e.name]||0)+1; });
   const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,7);
   if(!sorted.length){ document.getElementById('freqList').innerHTML='<div class="empty"><p>累積更多記錄後會顯示</p></div>'; return; }
   const max=sorted[0][1];
@@ -645,11 +695,13 @@ function renderStats(){
     </div>`
   ).join('');
 }
-// ── DELETE ──
-function deleteFood(key,id){
-  saveFoods(key, loadFoods(key).filter(f=>f.id!==id));
+function rerenderAll(){ renderToday(); renderHistory(); renderStats(); }
+function deleteFood(id){
+  ENTRIES=ENTRIES.filter(e=>e.id!==id); cacheSave();
   renderToday(); renderHistory(); renderStats();
+  pushDelete(id);
 }
+
 // ── MODAL / NAV ──
 function showAddModal(){
   document.getElementById('addModal').classList.add('show');
@@ -673,8 +725,124 @@ function showToast(msg){
   t.classList.add('show'); clearTimeout(window._tt);
   window._tt=setTimeout(()=>t.classList.remove('show'),4000);
 }
+
+// ════════ SUPABASE 雲端同步 ════════
+function configured(){ return !!(SUPABASE_URL && SUPABASE_ANON_KEY); }
+function updateSyncBadge(t){
+  const b=document.getElementById('syncBtn');
+  if(b){ b.title=t; b.textContent = (t.indexOf('同步中')>=0)?'⟳':'☁'; }
+}
+async function initSupabase(){
+  if(!configured()) return;
+  if(typeof supabase==='undefined') return;
+  sb=supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  try{ const {data}=await sb.auth.getSession(); user=data.session?data.session.user:null; }catch{}
+  sb.auth.onAuthStateChange((_e,s)=>{ user=s?s.user:null; refreshAuthUI(); if(user) syncNow(); });
+}
+function refreshAuthUI(){
+  const sync=document.getElementById('syncBtn');
+  const info=document.getElementById('accountInfo');
+  const loginBtn=document.getElementById('loginBtn');
+  const logoutBtn=document.getElementById('logoutBtn');
+  const loginModal=document.getElementById('loginModal');
+  if(!configured()){
+    sync.style.display='none';
+    info.textContent='尚未設定雲端同步（資料只存這台手機）';
+    loginBtn.style.display='none'; logoutBtn.style.display='none';
+    loginModal.classList.remove('show');
+    return;
+  }
+  if(user){
+    sync.style.display='inline-block';
+    info.textContent='已登入：'+(user.email||'')+' ・ 資料已雲端同步';
+    loginBtn.style.display='none'; logoutBtn.style.display='block';
+    loginModal.classList.remove('show');
+  }else{
+    sync.style.display='none';
+    info.textContent='已設定雲端，但尚未登入';
+    loginBtn.style.display='block'; logoutBtn.style.display='none';
+    showLogin();
+  }
+}
+function showLogin(){ if(configured()) document.getElementById('loginModal').classList.add('show'); }
+async function sendCode(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const msg=document.getElementById('loginMsg');
+  if(!email){ msg.textContent='請先輸入 email'; return; }
+  if(!sb){ msg.textContent='雲端尚未設定'; return; }
+  msg.textContent='寄送中…';
+  try{
+    const {error}=await sb.auth.signInWithOtp({email, options:{shouldCreateUser:true}});
+    if(error) throw error;
+    document.getElementById('codeWrap').style.display='block';
+    msg.textContent='驗證碼已寄到 '+email+'（記得看垃圾信匣）';
+  }catch(e){ msg.textContent='寄送失敗：'+(e.message||e); }
+}
+async function verifyCode(){
+  const email=document.getElementById('loginEmail').value.trim();
+  const token=document.getElementById('loginCode').value.trim();
+  const msg=document.getElementById('loginMsg');
+  if(!token){ msg.textContent='請輸入驗證碼'; return; }
+  msg.textContent='驗證中…';
+  try{
+    const {error}=await sb.auth.verifyOtp({email, token, type:'email'});
+    if(error) throw error;
+    msg.textContent='登入成功！';
+  }catch(e){ msg.textContent='驗證失敗：'+(e.message||e); }
+}
+async function doLogout(){
+  if(sb){ try{ await sb.auth.signOut(); }catch{} }
+  user=null; refreshAuthUI(); showToast('已登出（本機記錄仍保留）');
+}
+async function pushInsert(rows){
+  if(!(sb&&user)) return;
+  try{
+    const {error}=await sb.from('food_entries').upsert(rows,{onConflict:'id'});
+    if(error) throw error;
+    updateSyncBadge('已同步 ✓');
+  }catch(e){ rows.forEach(r=>enqueue({type:'insert',row:r})); updateSyncBadge('待同步'); }
+}
+async function pushDelete(id){
+  if(!(sb&&user)) return;
+  try{
+    const {error}=await sb.from('food_entries').delete().eq('id',id);
+    if(error) throw error;
+  }catch(e){ enqueue({type:'delete',id}); updateSyncBadge('待同步'); }
+}
+async function syncNow(){
+  if(!(sb&&user)){ if(configured()) showLogin(); return; }
+  updateSyncBadge('同步中');
+  // 1. 清空待同步佇列
+  const q=getOutbox(); const remain=[];
+  for(const op of q){
+    try{
+      if(op.type==='insert'){ const {error}=await sb.from('food_entries').upsert(op.row,{onConflict:'id'}); if(error) throw error; }
+      else { const {error}=await sb.from('food_entries').delete().eq('id',op.id); if(error) throw error; }
+    }catch(e){ remain.push(op); }
+  }
+  setOutbox(remain);
+  // 2. 首次登入：把登入前的本機資料上傳一次
+  if(!localStorage.getItem('fd_seeded')){
+    if(ENTRIES.length){ try{ await sb.from('food_entries').upsert(ENTRIES,{onConflict:'id'}); }catch(e){} }
+    localStorage.setItem('fd_seeded','1');
+  }
+  // 3. 從雲端拉回全部，作為最新狀態
+  try{
+    const {data,error}=await sb.from('food_entries').select('id,name,meal,health,note,day,time').order('created_at',{ascending:true});
+    if(error) throw error;
+    let next=(data||[]).map(r=>({id:r.id,name:r.name,meal:r.meal,health:r.health,note:r.note,day:r.day,time:r.time}));
+    // 把尚未送出的本機變更疊回，避免畫面閃掉
+    getOutbox().forEach(op=>{
+      if(op.type==='insert' && !next.find(e=>e.id===op.row.id)) next.push(op.row);
+      if(op.type==='delete') next=next.filter(e=>e.id!==op.id);
+    });
+    ENTRIES=next; cacheSave(); rerenderAll();
+    updateSyncBadge(remain.length?'待同步':'已同步 ✓');
+  }catch(e){ updateSyncBadge('離線'); }
+}
+
 // ── INIT ──
-function init(){
+async function init(){
   document.getElementById('todayLabel').textContent=new Date().toLocaleDateString('zh-TW',{month:'long',day:'numeric',weekday:'short'});
   const qp=document.getElementById('quickPills');
   QUICK.forEach(n=>{
@@ -683,8 +851,12 @@ function init(){
     b.onclick=()=>quickAdd(n); qp.appendChild(b);
   });
   document.getElementById('mealSelect').value=getCurrentMeal();
-  renderPending(); renderToday(); renderHistory(); renderStats();
+  cacheLoad(); migrateOld();
+  renderPending(); rerenderAll();
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js').catch(()=>{}); }
+  await initSupabase();
+  refreshAuthUI();
+  if(sb&&user) syncNow();
 }
 document.addEventListener('DOMContentLoaded',()=>{
   init();
