@@ -356,6 +356,10 @@ body {
     <div class="modal-handle"></div>
     <div class="s-title" style="margin-bottom:14px">新增這一餐</div>
     <div class="input-group" style="margin-bottom:14px">
+      <label>日期（可補記過去）</label>
+      <input type="date" id="dateInput">
+    </div>
+    <div class="input-group" style="margin-bottom:14px">
       <label>餐次</label>
       <select id="mealSelect">
         <option value="早餐">🌅 早餐</option>
@@ -564,14 +568,14 @@ function renderPending(){
 function saveMeal(){
   if(!pending.length){ showToast('先加入至少一項食物'); return; }
   const meal=document.getElementById('mealSelect').value;
-  const day=todayStr();
+  const day=document.getElementById('dateInput').value || todayStr();
   const time=new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'});
   const rows=pending.map(p=>({id:uuid(), name:p.name, meal, health:p.health, note:p.note, day, time}));
   ENTRIES.push(...rows); cacheSave();
   const saved=[...pending];
   pending=[]; renderPending();
   document.getElementById('foodInput').value='';
-  hideAddModal(); renderToday(); renderStats();
+  hideAddModal(); renderToday(); renderHistory(); renderStats();
   showToast(buildMealFeedback(saved, meal));
   pushInsert(rows);
 }
@@ -706,6 +710,10 @@ function deleteFood(id){
 function showAddModal(){
   document.getElementById('addModal').classList.add('show');
   document.getElementById('mealSelect').value=getCurrentMeal();
+  const di=document.getElementById('dateInput');
+  const onHistory=document.getElementById('page-history').classList.contains('active');
+  di.value = onHistory ? dateStr(historyDate) : todayStr();
+  di.max = todayStr();
   renderPending();
 }
 function hideAddModal(e){
