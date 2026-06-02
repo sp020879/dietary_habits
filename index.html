@@ -726,8 +726,30 @@ function addFood(){
   document.getElementById('foodInput').value='';
   const ci=document.getElementById('calInput'); ci.value=''; ci.dataset.manual=''; ci.placeholder='大卡';
   clearPhoto(); hideAddModal(); renderToday(); renderStats();
-  const msgs={great:'✅ 很棒的選擇！',good:'👍 不錯',ok:'⚠️ 偶爾沒問題',avoid:'🚨 這個對你腸胃負擔較大'};
-  showToast(msgs[detectH(name)]);
+  showToast(buildFeedback(name, detectH(name), meal));
+}
+// ── 即時回饋（依食物、體質、時間，本地產生）──
+function buildFeedback(name, h, meal){
+  const hour=new Date().getHours();
+  // 先看特殊情境（最貼近你的體質提醒）
+  if(/冰|手搖|珍奶|奶茶|汽水|可樂/.test(name)) return '🧊 冰的對你腸胃負擔大，下次換溫熱的會更舒服';
+  if(/炸|鹹酥|薯條/.test(name)) return '🍳 油炸偏燥熱，記得多配點溫蔬菜平衡一下';
+  if(/咖啡|美式|拿鐵/.test(name)){
+    const eatenToday=loadFoods(todayKey()).some(f=>!/咖啡|美式|拿鐵|茶/.test(f.name));
+    if(!eatenToday) return '☕ 先吃點香蕉或燕麥再喝，別空腹喔';
+    return '☕ 吃過東西再喝，這樣對胃剛剛好';
+  }
+  if(hour>=21 && h!=='great') return '🌙 這個時間吃，盡量清淡，給腸胃時間休息';
+  // 一般情境：依評分挑語句（每次隨機，像在聊天）
+  const note=DB[name]?DB[name].note:'';
+  const pools={
+    great:['🌿 很棒的選擇，'+(note||'很適合你的體質'),'✨ 這個你腸胃會謝謝你','💚 溫和好消化，繼續保持'],
+    good:['👍 不錯，'+(note||'適合你吃'),'🙂 這餐挑得很穩','✅ 好選擇，記得細嚼慢嚥'],
+    ok:['⚠️ 偶爾沒問題，'+(note||'適量就好'),'🍽️ 可以吃，份量別太多','😌 想吃就吃，下一餐清爽一點'],
+    avoid:['🚨 這個對你腸胃負擔較大，'+(note||'淺嚐就好'),'💭 吃了沒關係，記得多喝溫水','🫧 下次想吃時，試試溫熱的替代品']
+  };
+  const arr=pools[h]||pools.ok;
+  return arr[Math.floor(Math.random()*arr.length)];
 }
 // ── RENDER FOOD LOG ───────────────────────────────────
 function renderFoodList(foods, container){
