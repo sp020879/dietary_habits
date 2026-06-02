@@ -473,6 +473,7 @@ body {
 <script>
 // ── DATA ──────────────────────────────────────────────
 const DB = {
+  // ── 非常適合 ──
   '溫薑茶':{cal:5,h:'great',note:'每天必喝，暖胃護腸'},
   '燕麥粥':{cal:150,h:'great',note:'最佳早餐'},
   '燕麥優格碗':{cal:250,h:'great',note:'你的黃金早餐'},
@@ -481,23 +482,65 @@ const DB = {
   '香蕉':{cal:90,h:'great',note:'溫和補充能量'},
   '鮭魚':{cal:200,h:'great',note:'Omega-3優質蛋白'},
   '豆腐':{cal:80,h:'great',note:'植物蛋白好消化'},
+  '味噌湯':{cal:60,h:'great',note:'溫熱養胃'},
   '薑黃飯':{cal:180,h:'great',note:'抗發炎泰國隨手可得'},
   '蒸魚':{cal:150,h:'great',note:'輕盈蛋白質'},
   '芭樂':{cal:50,h:'great',note:'維C穩血糖'},
+  '燙青菜':{cal:50,h:'great',note:'溫熱蔬菜好消化'},
+  '地瓜':{cal:130,h:'great',note:'溫補好消化'},
+  '南瓜':{cal:80,h:'great',note:'暖身好澱粉'},
+  '雞湯':{cal:150,h:'great',note:'溫熱滋補'},
+  // ── 適合 ──
   '白飯':{cal:200,h:'good',note:'最好消化的主食'},
+  '糙米飯':{cal:200,h:'good',note:'纖維多血糖穩'},
   '雞胸肉':{cal:165,h:'good',note:'低脂高蛋白'},
+  '雞腿':{cal:250,h:'good',note:'去皮更清爽'},
   '水煮蛋':{cal:70,h:'good',note:'優質蛋白質'},
+  '荷包蛋':{cal:90,h:'good',note:'少油更好'},
+  '蝦':{cal:100,h:'good',note:'低脂蛋白質'},
   '蘋果':{cal:80,h:'good',note:'助消化常溫吃'},
   '酸種麵包':{cal:120,h:'good',note:'最好消化的麵包'},
+  '吐司':{cal:150,h:'good',note:'簡單澱粉'},
   '御飯糰':{cal:180,h:'good',note:'方便好消化'},
+  '飯糰':{cal:180,h:'good',note:'方便好消化'},
   '壽司':{cal:250,h:'good',note:'搭熱綠茶'},
+  '蛋餅':{cal:220,h:'good',note:'早餐常見'},
+  '豆漿':{cal:120,h:'good',note:'溫的最好'},
+  '沙拉':{cal:120,h:'good',note:'醬料少一點'},
+  '玉米':{cal:120,h:'good',note:'天然甜澱粉'},
+  '橘子':{cal:50,h:'good',note:'適量維C'},
+  // ── 還可以 ──
   '熱美式':{cal:5,h:'ok',note:'吃完早餐再喝'},
   '拿鐵':{cal:120,h:'ok',note:'熱的午前喝'},
+  '卡布奇諾':{cal:110,h:'ok',note:'熱的午前喝'},
   '義大利麵':{cal:350,h:'ok',note:'偶爾可以'},
+  '牛肉麵':{cal:540,h:'ok',note:'湯別喝太多'},
+  '陽春麵':{cal:350,h:'ok',note:'清湯較溫和'},
+  '河粉':{cal:320,h:'ok',note:'偶爾可以'},
+  '滷肉飯':{cal:500,h:'ok',note:'份量別太多'},
+  '雞肉飯':{cal:450,h:'ok',note:'還算清爽'},
+  '披薩':{cal:285,h:'ok',note:'一片就好'},
   '芒果':{cal:100,h:'ok',note:'適量不要太多'},
+  '西瓜':{cal:90,h:'ok',note:'常溫吃不要冰'},
+  '葡萄':{cal:80,h:'ok',note:'適量'},
+  '牛奶':{cal:130,h:'ok',note:'乳製品適量'},
+  '芒果糯米':{cal:400,h:'ok',note:'甜點偶爾享受'},
+  // ── 建議避免 ──
   '冰咖啡':{cal:80,h:'avoid',note:'冰的傷腸胃'},
   '炸雞':{cal:400,h:'avoid',note:'油炸加重熱性'},
+  '鹹酥雞':{cal:500,h:'avoid',note:'油炸又重口味'},
+  '薯條':{cal:320,h:'avoid',note:'油炸負擔大'},
+  '炒飯':{cal:500,h:'avoid',note:'油多較燥熱'},
+  '炒麵':{cal:480,h:'avoid',note:'油多較燥熱'},
+  '泡麵':{cal:450,h:'avoid',note:'加工又重鹹'},
   '手搖飲':{cal:300,h:'avoid',note:'冰加糖雙重傷害'},
+  '珍珠奶茶':{cal:500,h:'avoid',note:'冰糖加乳脂'},
+  '可樂':{cal:140,h:'avoid',note:'冰汽水傷胃'},
+  '蛋糕':{cal:350,h:'avoid',note:'高糖高油'},
+  '巧克力':{cal:250,h:'avoid',note:'偶爾一小塊'},
+  '洋芋片':{cal:300,h:'avoid',note:'加工油炸'},
+  '打拋豬飯':{cal:550,h:'avoid',note:'重口味偶爾吃'},
+  '綠咖哩':{cal:400,h:'avoid',note:'椰漿較油膩'},
 };
 const QUICK=['燕麥優格碗','香蕉','木瓜','熱美式','白飯','蒸魚','雞胸肉','希臘優格','壽司','豆腐','芭樂'];
 const HS={great:5,good:4,ok:3,avoid:1};
@@ -552,6 +595,27 @@ function detectH(name){
 function getNote(name){
   if(DB[name]) return DB[name].note;
   return {great:'很適合你的體質',good:'適合你吃',ok:'偶爾可以',avoid:'對腸胃負擔較大'}[detectH(name)];
+}
+// ── 卡路里估算（不需 AI / 不需網路）──
+function estimateCal(name){
+  if(!name) return 0;
+  if(DB[name]) return DB[name].cal;
+  // 模糊比對：名稱包含資料庫食物
+  for(const k in DB){ if(name.includes(k)||k.includes(name)) return DB[k].cal; }
+  // 關鍵字粗估（常見份量平均值）
+  const rules=[
+    [/炸|鹹酥|薯條|洋芋片/,420],[/便當|套餐|燴飯|蓋飯/,650],
+    [/炒飯|炒麵|燉飯/,500],[/拉麵|牛肉麵|烏龍麵/,520],[/麵|粉|米線/,380],
+    [/滷肉飯|雞肉飯|焢肉/,480],[/咖哩/,420],[/披薩/,285],[/漢堡/,500],
+    [/三明治|潛艇堡/,320],[/蛋餅|蘿蔔糕|飯糰|壽司/,230],[/粥|湯/,150],
+    [/飯/,300],[/牛排|豬排|排骨/,350],[/雞腿|雞排/,300],[/雞胸|魚|蝦|豆腐|蛋/,160],
+    [/沙拉|生菜|青菜|蔬菜/,90],[/水果|蘋果|香蕉|芭樂|橘|莓/,80],
+    [/蛋糕|甜點|布丁|冰淇淋|甜甜圈/,350],[/餅乾|洋芋|零食/,200],
+    [/珍奶|奶茶|手搖/,400],[/汽水|可樂/,150],[/拿鐵|卡布|牛奶|豆漿/,120],
+    [/咖啡|美式|茶/,10],
+  ];
+  for(const [re,cal] of rules){ if(re.test(name)) return cal; }
+  return 250; // 找不到時的概略值
 }
 function getCurrentMeal(){
   const h=new Date().getHours();
@@ -646,19 +710,21 @@ function addAIFoods(foods_data){
 // ── MANUAL ADD ────────────────────────────────────────
 function quickAdd(name){
   document.getElementById('foodInput').value=name;
-  if(DB[name]) document.getElementById('calInput').value=DB[name].cal;
+  const ci=document.getElementById('calInput');
+  ci.value=estimateCal(name); ci.dataset.manual='';
 }
 function addFood(){
   const name=document.getElementById('foodInput').value.trim();
-  const cal=parseInt(document.getElementById('calInput').value)||0;
+  let cal=parseInt(document.getElementById('calInput').value)||0;
   const meal=document.getElementById('mealSelect').value;
   if(!name){showToast('請輸入食物名稱');return;}
+  if(!cal) cal=estimateCal(name); // 沒填卡路里就自動估算
   const key=todayKey(); const foods=loadFoods(key);
   foods.push({id:Date.now(),name,cal,meal,health:detectH(name),note:getNote(name),
     time:new Date().toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'}),photo:null});
   saveFoods(key,foods);
   document.getElementById('foodInput').value='';
-  document.getElementById('calInput').value='';
+  const ci=document.getElementById('calInput'); ci.value=''; ci.dataset.manual=''; ci.placeholder='大卡';
   clearPhoto(); hideAddModal(); renderToday(); renderStats();
   const msgs={great:'✅ 很棒的選擇！',good:'👍 不錯',ok:'⚠️ 偶爾沒問題',avoid:'🚨 這個對你腸胃負擔較大'};
   showToast(msgs[detectH(name)]);
@@ -814,7 +880,17 @@ function showToast(msg){
 }
 document.addEventListener('DOMContentLoaded',()=>{
   init();
-  document.getElementById('foodInput').addEventListener('keydown',e=>{if(e.key==='Enter')addFood();});
+  const fi=document.getElementById('foodInput');
+  const ci=document.getElementById('calInput');
+  // 使用者手動改卡路里 → 標記，之後不自動覆蓋
+  ci.addEventListener('input',()=>{ ci.dataset.manual='1'; });
+  // 邊打食物名稱，邊自動估算卡路里（未手動修改時）
+  fi.addEventListener('input',()=>{
+    const est=estimateCal(fi.value.trim());
+    ci.placeholder='約 '+est;
+    if(ci.dataset.manual!=='1') ci.value=est||'';
+  });
+  fi.addEventListener('keydown',e=>{if(e.key==='Enter')addFood();});
 });
 </script>
 </body>
