@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="飲食日記">
@@ -35,7 +35,7 @@ html { height:100%; }
 body {
   font-family:'Noto Sans TC',sans-serif;
   background:var(--bg); color:var(--text);
-  height:100%; overflow:hidden;
+  height:100dvh; overflow:hidden;
   display:flex; flex-direction:column;
 }
 .nav-bar {
@@ -54,12 +54,12 @@ body {
   background:var(--surface);
   border-top:1px solid var(--border);
   display:flex;
-  padding-bottom: var(--safe-bottom);
+  padding-bottom: max(8px, calc(var(--safe-bottom) - 10px));
   flex-shrink:0; z-index:100;
 }
 .bnav-btn {
   flex:1; display:flex; flex-direction:column; align-items:center;
-  padding:10px 0 8px; background:none; border:none; cursor:pointer;
+  padding:8px 0 6px; background:none; border:none; cursor:pointer;
   font-family:'Noto Sans TC',sans-serif; transition:all 0.2s;
 }
 .bnav-icon { font-size:22px; line-height:1; margin-bottom:3px; }
