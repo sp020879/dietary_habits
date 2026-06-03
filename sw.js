@@ -1,5 +1,5 @@
 // Service Worker — 飲食日記 PWA
-const CACHE = 'diet-diary-v10';
+const CACHE = 'diet-diary-v11';
 const ASSETS = [
   './',
   './index.html',
@@ -8,34 +8,45 @@ const ASSETS = [
   './icon-512.png'
 ];
 
-// 安裝：預先快取核心檔案
+// 安裝：用 reload 強制抓最新檔案進快取
 self.addEventListener('install', (e) => {
-  e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(ASSETS)).then(() => self.skipWaiting())
-  );
+  e.waitUntil((async () => {
+    const c = await caches.open(CACHE);
+    await c.addAll(ASSETS.map((u) => new Request(u, { cache: 'reload' })));
+    self.skipWaiting();
+  })());
 });
 
 // 啟用：清掉舊版本快取
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
-  );
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
-// 取用：快取優先，找不到再走網路（API 請求一律走網路）
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  if (req.method !== 'GET' || req.url.includes('api.anthropic.com')) return;
-  e.respondWith(
-    caches.match(req).then((cached) =>
-      cached ||
-      fetch(req).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE).then((c) => c.put(req, copy)).catch(() => {});
-        return res;
-      }).catch(() => caches.match('./index.html'))
-    )
-  );
+  if (req.method !== 'GET') return;
+  // 動態資料（雲端 / API）一律走網路、不快取
+  if (req.url.includes('supabase') || req.url.includes('api.anthropic.com')) return;
+
+  const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+  if (isHTML) {
+    // 網路優先：有網路就拿最新頁面，離線才用快取
+    e.respondWith((async () => {
+      try {
+        const fresh = await fetch(req);
+        const c = await caches.open(CACHE);
+        c.put('./index.html', fresh.clone());
+        return fresh;
+      } catch (err) {
+        return (await caches.match('./index.html')) || (await caches.match(req));
+      }
+    })());
+    return;
+  }
+  // 其他靜態資源：快取優先
+  e.respondWith(caches.match(req).then((cached) => cached || fetch(req)));
 });
