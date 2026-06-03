@@ -1,5 +1,5 @@
 // Service Worker — 飲食日記 PWA
-const CACHE = 'diet-diary-v12';
+const CACHE = 'diet-diary-v13';
 const ASSETS = [
   './',
   './index.html',

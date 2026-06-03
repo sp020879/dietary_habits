@@ -95,6 +95,8 @@ body {
 }
 .s-title::before { content:''; width:3px; height:15px; background:var(--accent); border-radius:2px; display:block; }
 .hint { font-size:11px; color:var(--text3); line-height:1.55; margin:6px 0 12px; }
+.range-pill { border:1px solid var(--border); background:var(--surface); color:var(--text2); border-radius:14px; padding:5px 16px; font-size:12px; font-family:'Noto Sans TC',sans-serif; cursor:pointer; transition:all 0.2s; }
+.range-pill.active { background:var(--text); color:var(--bg); border-color:var(--text); }
 .quick-wrap { margin-bottom:14px; }
 .quick-label { font-size:10px; color:var(--text3); letter-spacing:0.06em; margin-bottom:7px; }
 .quick-scroll { display:flex; gap:6px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
@@ -285,12 +287,18 @@ body {
   <!-- STATS -->
   <div class="page" id="page-stats">
     <div class="page-content">
-      <div class="s-title">本週體質契合度</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="s-title" style="margin-bottom:0" id="statsTitle">本週體質契合度</div>
+        <div style="display:flex;gap:6px">
+          <button class="range-pill active" id="rangeWeek" onclick="setRange('week')">週</button>
+          <button class="range-pill" id="rangeMonth" onclick="setRange('month')">月</button>
+        </div>
+      </div>
       <div class="week-bar-wrap">
-        <div style="font-size:11px;color:var(--text3)">每日契合度（0-100）</div>
+        <div style="font-size:11px;color:var(--text3)" id="chartSub">每日契合度（0-100）</div>
         <div class="week-bars" id="weekBars"></div>
       </div>
-      <div class="s-title" style="margin-top:8px">最常吃的食物</div>
+      <div class="s-title" style="margin-top:8px" id="freqTitle">最常吃的食物（近 7 天）</div>
       <div class="food-freq" id="freqList">
         <div class="empty"><p>累積更多記錄後會顯示</p></div>
       </div>
@@ -493,6 +501,7 @@ const HD={great:'dot-great',good:'dot-good',ok:'dot-ok',avoid:'dot-avoid'};
 
 let historyDate=new Date();
 let pending=[];
+let statsRange='week';   // 'week' = 近7天, 'month' = 近30天
 let ENTRIES=[];        // 所有記錄（單一資料來源）
 let sb=null, user=null; // Supabase client / 登入者
 
@@ -670,29 +679,56 @@ function historyNext(){
   const tomorrow=new Date(); tomorrow.setDate(tomorrow.getDate()+1);
   if(historyDate<tomorrow){ historyDate.setDate(historyDate.getDate()+1); renderHistory(); }
 }
+function setRange(r){
+  statsRange=r;
+  document.getElementById('rangeWeek').classList.toggle('active', r==='week');
+  document.getElementById('rangeMonth').classList.toggle('active', r==='month');
+  const isMonth=r==='month';
+  document.getElementById('statsTitle').textContent=isMonth?'近 30 天體質契合度':'本週體質契合度';
+  document.getElementById('chartSub').textContent=isMonth?'每週平均契合度（0-100）':'每日契合度（0-100）';
+  document.getElementById('freqTitle').textContent=isMonth?'最常吃的食物（近 30 天）':'最常吃的食物（近 7 天）';
+  renderStats();
+}
+function barColor(s){ return !s?'var(--border)':s>=80?'var(--green)':s>=60?'var(--accent2)':s>=40?'var(--yellow)':'var(--red)'; }
 function renderStats(){
-  const days=['一','二','三','四','五','六','日'];
+  const isMonth=statsRange==='month';
   const today=new Date();
-  const weekData=[];
-  for(let i=6;i>=0;i--){
-    const d=new Date(today); d.setDate(d.getDate()-i);
-    const score=calcScore(foodsByDay(dateStr(d)));
-    const dow=d.getDay();
-    weekData.push({label:days[dow===0?6:dow-1],score});
+  let bars=[];
+  if(isMonth){
+    // 最近 4 週，每根 = 該週平均契合度
+    for(let w=3; w>=0; w--){
+      let scores=[];
+      for(let d=0; d<7; d++){
+        const dd=new Date(today); dd.setDate(dd.getDate()-(w*7+d));
+        const s=calcScore(foodsByDay(dateStr(dd)));
+        if(s!=null) scores.push(s);
+      }
+      const avg=scores.length?Math.round(scores.reduce((a,b)=>a+b,0)/scores.length):null;
+      bars.push({label: w===0?'本週':w+'週前', score:avg});
+    }
+  }else{
+    const days=['一','二','三','四','五','六','日'];
+    for(let i=6;i>=0;i--){
+      const d=new Date(today); d.setDate(d.getDate()-i);
+      const dow=d.getDay();
+      bars.push({label:days[dow===0?6:dow-1], score:calcScore(foodsByDay(dateStr(d)))});
+    }
   }
-  document.getElementById('weekBars').innerHTML=weekData.map(w=>{
+  document.getElementById('weekBars').innerHTML=bars.map(w=>{
     const h=w.score?Math.round(w.score):0;
-    const color=!w.score?'var(--border)':w.score>=80?'var(--green)':w.score>=60?'var(--accent2)':w.score>=40?'var(--yellow)':'var(--red)';
     return `<div class="wbar-col">
       <div class="wbar-val">${w.score||''}</div>
-      <div class="wbar" style="height:${h}%;background:${color}"></div>
+      <div class="wbar" style="height:${h}%;background:${barColor(w.score)}"></div>
       <div class="wbar-label">${w.label}</div>
     </div>`;
   }).join('');
+  // 最常吃：依期間（近 7 或 30 天）
+  const since=new Date(today); since.setDate(since.getDate()-(isMonth?29:6));
+  const sinceStr=dateStr(since);
   const freq={};
-  ENTRIES.forEach(e=>{ freq[e.name]=(freq[e.name]||0)+1; });
+  ENTRIES.filter(e=>e.day>=sinceStr).forEach(e=>{ freq[e.name]=(freq[e.name]||0)+1; });
   const sorted=Object.entries(freq).sort((a,b)=>b[1]-a[1]).slice(0,7);
-  if(!sorted.length){ document.getElementById('freqList').innerHTML='<div class="empty"><p>累積更多記錄後會顯示</p></div>'; return; }
+  if(!sorted.length){ document.getElementById('freqList').innerHTML='<div class="empty"><p>這段期間還沒有記錄</p></div>'; return; }
   const max=sorted[0][1];
   document.getElementById('freqList').innerHTML=sorted.map(([name,count],i)=>
     `<div class="freq-row">
