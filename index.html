@@ -199,10 +199,11 @@ body {
   transform:translateX(-50%) translateY(80px);
   background:var(--text); color:var(--bg); padding:12px 22px;
   border-radius:18px; font-size:13px; z-index:999; line-height:1.5;
-  transition:transform 0.3s ease; max-width:88%; text-align:center;
+  transition:transform 0.3s ease, opacity 0.3s ease; max-width:88%; text-align:center;
   box-shadow:0 4px 20px rgba(0,0,0,0.2);
+  opacity:0; visibility:hidden;
 }
-.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; visibility:visible; }
 .modal-overlay {
   position:fixed; inset:0; background:rgba(0,0,0,0.45);
   z-index:200; display:none; align-items:flex-end;
@@ -270,6 +271,7 @@ body {
         <div class="date-nav-label" id="historyDateLabel">—</div>
         <button class="date-nav-btn" onclick="historyNext()">›</button>
       </div>
+      <div style="text-align:center;font-size:10px;color:var(--text3);margin:-10px 0 14px">← 左右滑動切換日期 →</div>
       <div class="history-summary">
         <div class="h-card"><div class="h-val" id="hScore">—</div><div class="h-label">體質契合度</div></div>
         <div class="h-card"><div class="h-val" id="hCount">—</div><div class="h-label">記錄項目</div></div>
@@ -881,6 +883,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 // 回到 App / 切回前景時，自動拉雲端最新資料（達成跨裝置同步）
 document.addEventListener('visibilitychange',()=>{ if(!document.hidden && sb && user) syncNow(); });
 window.addEventListener('focus',()=>{ if(sb && user) syncNow(); });
+// 歷史頁：左右滑切換日期（左滑=後一天，右滑=前一天）
+(function(){
+  const hp=document.getElementById('page-history');
+  let sx=0, sy=0;
+  hp.addEventListener('touchstart',e=>{ sx=e.changedTouches[0].clientX; sy=e.changedTouches[0].clientY; },{passive:true});
+  hp.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].clientX-sx, dy=e.changedTouches[0].clientY-sy;
+    if(Math.abs(dx)>60 && Math.abs(dx)>Math.abs(dy)*1.5){ if(dx<0) historyNext(); else historyPrev(); }
+  },{passive:true});
+})();
 </script>
 </body>
 </html>
