@@ -496,8 +496,10 @@ let sb=null, user=null; // Supabase client / 登入者
 
 // ── 工具 ──
 const uuid=()=> (crypto.randomUUID? crypto.randomUUID() : 'x'+Date.now()+Math.random().toString(16).slice(2));
-const todayStr=()=> new Date().toISOString().slice(0,10);
-const dateStr=(d)=> d.toISOString().slice(0,10);
+const _pad=(n)=> String(n).padStart(2,'0');
+const localDay=(d)=> d.getFullYear()+'-'+_pad(d.getMonth()+1)+'-'+_pad(d.getDate()); // 用「本地日期」，避免時區誤差
+const todayStr=()=> localDay(new Date());
+const dateStr=(d)=> localDay(d);
 function foodsByDay(day){ return ENTRIES.filter(e=>e.day===day); }
 function getAllDays(){ return [...new Set(ENTRIES.map(e=>e.day))]; }
 
@@ -837,21 +839,19 @@ async function _doSync(){
     }catch(e){ remain.push(op); }
   }
   setOutbox(remain);
-  // 2. 首次登入：把登入前的本機資料上傳一次
-  if(!localStorage.getItem('fd_seeded')){
-    if(ENTRIES.length){ try{ await sb.from('food_entries').upsert(ENTRIES,{onConflict:'id'}); }catch(e){} }
-    localStorage.setItem('fd_seeded','1');
-  }
-  // 3. 從雲端拉回全部，作為最新狀態
+  // 2. 先把所有本機記錄上傳（依 id 去重，重複不會出錯）——確保本機資料一定先進雲端，絕不被覆蓋掉
+  if(ENTRIES.length){ try{ const {error}=await sb.from('food_entries').upsert(ENTRIES,{onConflict:'id'}); if(error) throw error; }catch(e){} }
+  // 3. 從雲端拉回全部，合併為最新狀態
   try{
     const {data,error}=await sb.from('food_entries').select('id,name,meal,health,note,day,time').order('created_at',{ascending:true});
     if(error) throw error;
     let next=(data||[]).map(r=>({id:r.id,name:r.name,meal:r.meal,health:r.health,note:r.note,day:r.day,time:r.time}));
-    // 把尚未送出的本機變更疊回，避免畫面閃掉
-    getOutbox().forEach(op=>{
-      if(op.type==='insert' && !next.find(e=>e.id===op.row.id)) next.push(op.row);
-      if(op.type==='delete') next=next.filter(e=>e.id!==op.id);
-    });
+    // 套用尚未送出的刪除
+    const ob=getOutbox();
+    ob.forEach(op=>{ if(op.type==='delete') next=next.filter(e=>e.id!==op.id); });
+    // 保險：本機有、但雲端沒回傳的（例如上傳失敗）一律保留，絕不弄丟
+    const delIds=new Set(ob.filter(o=>o.type==='delete').map(o=>o.id));
+    ENTRIES.forEach(e=>{ if(!delIds.has(e.id) && !next.find(n=>n.id===e.id)) next.push(e); });
     ENTRIES=next; cacheSave(); rerenderAll();
     updateSyncBadge(remain.length?'待同步':'已同步 ✓');
   }catch(e){ updateSyncBadge('離線'); }
