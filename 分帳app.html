@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7d977f">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<title>出遊分帳</title>
+<style>
+  :root{
+    --blue:#7d977f; --blue-d:#647f68; --bg:#f4ece1; --card:#fffdf9;
+    --line:#e8ddcd; --ink:#4a4640; --sub:#9a9082; --green:#7d977f;
+    --red:#b67d70; --amber:#cda35f; --chip:#efe3d2;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang TC","Microsoft JhengHei",sans-serif;
+    background:var(--bg); color:var(--ink); font-size:16px;
+    padding-bottom:90px;
+  }
+  header{
+    background:linear-gradient(135deg,var(--blue),var(--blue-d));
+    color:#fff; padding:16px 16px 14px; position:sticky; top:0; z-index:20;
+    box-shadow:0 2px 10px rgba(0,0,0,.12);
+  }
+  .h-top{display:flex;align-items:center;gap:10px;}
+  .h-top select{
+    flex:1; background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.3);
+    border-radius:10px; padding:8px 10px; font-size:16px; font-weight:600;
+  }
+  .h-top select option{color:#000;}
+  .icon-btn{
+    background:rgba(255,255,255,.18); border:none; color:#fff; width:38px; height:38px;
+    border-radius:10px; font-size:20px; display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+  }
+  .h-sum{display:flex;justify-content:space-between;margin-top:12px;gap:8px;}
+  .h-sum .box{flex:1;text-align:center;background:rgba(255,255,255,.12);border-radius:10px;padding:8px 4px;}
+  .h-sum .box .n{font-size:20px;font-weight:700;}
+  .h-sum .box .l{font-size:11px;opacity:.85;margin-top:2px;}
+  main{padding:14px;}
+  .card{background:var(--card);border-radius:14px;padding:14px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .card h2{margin:0 0 10px;font-size:15px;color:var(--sub);font-weight:700;letter-spacing:.3px;display:flex;justify-content:space-between;align-items:center;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;}
+  .chip{background:var(--chip);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:14px;display:flex;align-items:center;gap:6px;}
+  .chip .x{color:var(--sub);font-weight:700;cursor:pointer;padding:2px 4px;}
+  .chip.add{background:var(--blue);border:1px solid var(--blue);color:#fff;font-weight:700;}
+  .item{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;}
+  .item .row1{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .item .nm{font-weight:600;font-size:16px;}
+  .item .amt{font-weight:700;color:var(--ink);white-space:nowrap;}
+  .item .meta{font-size:13px;color:var(--sub);margin-top:4px;}
+  .item .meta b{color:var(--blue);font-weight:600;}
+  .item .time{font-size:12px;color:var(--sub);margin-top:3px;}
+  .item .acts{display:flex;gap:14px;margin-top:8px;}
+  .item .acts span{font-size:13px;color:var(--sub);cursor:pointer;padding:4px 0;}
+  .item .acts .del{color:var(--red);}
+  .empty{color:var(--sub);text-align:center;padding:18px 0;font-size:14px;}
+  .person-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);}
+  .person-row:last-child{border-bottom:none;}
+  .person-row .nm{font-weight:600;}
+  .person-row .det{font-size:12px;color:var(--sub);margin-top:2px;}
+  .bal{font-weight:700;text-align:right;}
+  .bal.pos{color:var(--green);} .bal.neg{color:var(--red);}
+  .settle{display:flex;align-items:center;gap:8px;font-size:15px;padding:10px 0;border-bottom:1px dashed var(--line);}
+  .settle:last-child{border-bottom:none;}
+  .settle .ar{color:var(--blue);font-weight:700;}
+  .settle .m{margin-left:auto;font-weight:700;}
+  .hist{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);cursor:pointer;}
+  .hist:last-child{border-bottom:none;}
+  .hist.on{background:#f3ebde;border-radius:10px;padding:11px 10px;}
+  .hist .hnm{font-weight:600;}
+  .hist .hd{font-size:12px;color:var(--sub);margin-top:2px;}
+  .hist .ht{margin-left:auto;text-align:right;font-weight:700;color:var(--blue);}
+  .hist .badge{font-size:11px;background:var(--blue);color:#fff;border-radius:6px;padding:1px 6px;margin-left:6px;}
+  .fab{
+    position:fixed;left:50%;transform:translateX(-50%);bottom:22px;
+    background:var(--blue);color:#fff;border:none;border-radius:30px;
+    padding:15px 28px;font-size:17px;font-weight:700;box-shadow:0 6px 18px rgba(125,151,127,.5);
+    z-index:30;display:flex;align-items:center;gap:8px;cursor:pointer;
+  }
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:40;display:none;align-items:flex-end;}
+  .mask.on{display:flex;}
+  .sheet{background:#fff;width:100%;border-radius:18px 18px 0 0;padding:18px 16px 34px;max-height:90vh;overflow-y:auto;animation:up .25s ease;}
+  @keyframes up{from{transform:translateY(100%);}to{transform:translateY(0);}}
+  .sheet h3{margin:0 0 14px;font-size:18px;}
+  label.f{display:block;font-size:13px;color:var(--sub);margin:12px 0 5px;font-weight:600;}
+  input.f,select.f{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:#fff;color:var(--ink);}
+  .who{display:flex;flex-wrap:wrap;gap:8px;margin-top:5px;}
+  .who .p{padding:8px 14px;border:1px solid var(--line);border-radius:20px;font-size:14px;background:#fff;cursor:pointer;}
+  .who .p.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600;}
+  .who .allbtn{padding:8px 14px;border:1px dashed var(--blue);color:var(--blue);border-radius:20px;font-size:14px;font-weight:600;background:#fff;cursor:pointer;}
+  .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:700;margin-top:18px;cursor:pointer;}
+  .btn.pri{background:var(--blue);color:#fff;}
+  .btn.gho{background:#f3f4f6;color:var(--ink);margin-top:8px;}
+  .menu-item{padding:14px 4px;font-size:16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;cursor:pointer;}
+  .menu-item:active{opacity:.7;}
+  .menu-item.danger{color:var(--red);}
+  .addp-row{display:flex;gap:8px;}
+  .addp-row input{flex:1;}
+  .addp-row button{padding:0 18px;border:none;background:var(--blue);color:#fff;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;}
+
+  /* 自訂彈窗（取代 prompt/confirm/alert） */
+  .dlg-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:20px;}
+  .dlg-mask.on{display:flex;}
+  .dlg{background:#fff;border-radius:16px;padding:22px 18px 16px;width:100%;max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.18);}
+  .dlg h4{margin:0 0 12px;font-size:17px;color:var(--ink);}
+  .dlg p{margin:0 0 14px;font-size:15px;color:var(--sub);line-height:1.5;}
+  .dlg input{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:10px;font-size:16px;margin-bottom:14px;}
+  .dlg-btns{display:flex;gap:8px;}
+  .dlg-btns button{flex:1;padding:12px;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;}
+  .dlg-btns .ok{background:var(--blue);color:#fff;}
+  .dlg-btns .ok.danger{background:var(--red);}
+  .dlg-btns .ca{background:#f3f4f6;color:var(--ink);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="h-top">
+    <select id="tripSel" onchange="switchTrip(this.value)"></select>
+    <button class="icon-btn" onclick="openMenu()">⋯</button>
+  </div>
+  <div class="h-sum">
+    <div class="box"><div class="n" id="sTotal">0</div><div class="l">總花費</div></div>
+    <div class="box"><div class="n" id="sCount">0</div><div class="l">筆數</div></div>
+    <div class="box"><div class="n" id="sPpl">0</div><div class="l">人數</div></div>
+  </div>
+</header>
+
+<main>
+  <div class="card">
+    <h2>參與的人</h2>
+    <div class="addp-row" style="margin-bottom:10px">
+      <input class="f" id="pQuick" placeholder="輸入姓名後按新增" onkeydown="if(event.key==='Enter')quickAdd()">
+      <button onclick="quickAdd()">＋ 新增</button>
+    </div>
+    <div class="chips" id="people"></div>
+  </div>
+
+  <div class="card">
+    <h2>消費明細</h2>
+    <div id="items"></div>
+  </div>
+
+  <div class="card">
+    <h2>每人應付</h2>
+    <div id="persons"></div>
+  </div>
+
+  <div class="card">
+    <h2>結算（誰付給誰）</h2>
+    <div id="settle"></div>
+  </div>
+
+  <div class="card">
+    <h2>歷史紀錄　<span style="font-weight:400;font-size:12px">點一筆即可切換</span></h2>
+    <div id="history"></div>
+  </div>
+</main>
+
+<button class="fab" onclick="openItem()">＋ 記一筆</button>
+
+<!-- 新增/編輯 消費 -->
+<div class="mask" id="mItem">
+  <div class="sheet">
+    <h3 id="itemTitle">記一筆</h3>
+    <label class="f">項目名稱</label>
+    <input class="f" id="iName" placeholder="例如：肉骨茶、計程車">
+    <label class="f">金額</label>
+    <input class="f" id="iAmt" type="number" inputmode="decimal" placeholder="0">
+    <label class="f">誰先付的錢（墊付人）</label>
+    <select class="f" id="iPayer"></select>
+    <label class="f">這筆由誰分攤（平均分）</label>
+    <div class="who" id="iWho"></div>
+    <button class="btn pri" onclick="saveItem()">儲存</button>
+    <button class="btn gho" onclick="close_('mItem')">取消</button>
+  </div>
+</div>
+
+<!-- 菜單 -->
+<div class="mask" id="mMenu">
+  <div class="sheet">
+    <h3>設定 / 行程</h3>
+    <div class="menu-item" onclick="newTrip()">🧳　新增行程</div>
+    <div class="menu-item" onclick="renameTrip()">✏️　重新命名目前行程</div>
+    <div class="menu-item" onclick="changeCurrency()">💱　貨幣單位（目前：<span id="curLabel"></span>）</div>
+    <div class="menu-item" onclick="exportData()">📤　匯出備份（JSON）</div>
+    <div class="menu-item" onclick="triggerImport()">📥　匯入備份（JSON）</div>
+    <div class="menu-item danger" onclick="delTrip()">🗑　刪除目前行程</div>
+    <button class="btn gho" onclick="close_('mMenu')">關閉</button>
+  </div>
+</div>
+
+<!-- 隱藏的匯入 input -->
+<input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+
+<!-- 自訂對話框 -->
+<div class="dlg-mask" id="dlgMask">
+  <div class="dlg">
+    <h4 id="dlgTitle"></h4>
+    <p id="dlgMsg" style="display:none"></p>
+    <input id="dlgInput" style="display:none" type="text">
+    <div class="dlg-btns">
+      <button class="ca" id="dlgCancel" onclick="dlgResolve(null)">取消</button>
+      <button class="ok" id="dlgOk" onclick="dlgResolve(true)">確定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY='split_app_v1';
+let db, cur;
+let editId=null, selWho=[];
+
+/* ---- 自訂對話框（取代 alert/confirm/prompt） ---- */
+let dlgResolve=()=>{};
+function showDlg({title='',msg='',input=false,inputVal='',okText='確定',okDanger=false,showCancel=true}){
+  return new Promise(res=>{
+    dlgResolve=res;
+    document.getElementById('dlgTitle').textContent=title;
+    const msgEl=document.getElementById('dlgMsg');
+    if(msg){msgEl.textContent=msg;msgEl.style.display='';}else{msgEl.style.display='none';}
+    const inp=document.getElementById('dlgInput');
+    if(input){inp.style.display='';inp.value=inputVal;setTimeout(()=>inp.focus(),100);}else{inp.style.display='none';}
+    const ok=document.getElementById('dlgOk');
+    ok.textContent=okText;
+    ok.className='ok'+(okDanger?' danger':'');
+    // Enter on input
+    inp.onkeydown=e=>{if(e.key==='Enter')dlgResolve(true);};
+    const ca=document.getElementById('dlgCancel');
+    ca.style.display=showCancel?'':'none';
+    document.getElementById('dlgMask').classList.add('on');
+  });
+}
+// Override dlgResolve to also close + return value
+const _origRes=dlgResolve;
+document.getElementById('dlgOk').addEventListener('click',()=>{
+  const inp=document.getElementById('dlgInput');
+  const val=inp.style.display===''?inp.value:true;
+  document.getElementById('dlgMask').classList.remove('on');
+  dlgResolve(val);
+},{capture:true});
+document.getElementById('dlgCancel').addEventListener('click',()=>{
+  document.getElementById('dlgMask').classList.remove('on');
+  dlgResolve(null);
+},{capture:true});
+
+async function myAlert(title,msg=''){
+  await showDlg({title,msg,showCancel:false,okText:'好'});
+}
+async function myConfirm(title,msg=''){
+  return await showDlg({title,msg,okText:'確定',okDanger:true});
+}
+async function myPrompt(title,defaultVal=''){
+  return await showDlg({title,input:true,inputVal:defaultVal,okText:'確定'});
+}
+
+/* ---- 資料 ---- */
+function load(){
+  try{db=JSON.parse(localStorage.getItem(KEY));}catch(e){db=null;}
+  if(!db||!db.trips||!db.trips.length){
+    db={cur:0,trips:[blankTrip('我的出遊')]};
+  }
+  db.trips.forEach(t=>{if(!t.date)t.date=today();});
+  cur=db.trips[db.cur]||db.trips[0];
+}
+function save(){
+  try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){console.warn('localStorage不可用，資料未持久化');}
+}
+function blankTrip(name){return{name:name,cur:'THB',date:today(),people:[],items:[]};}
+function uid(){return Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function fmtTime(ts){if(!ts)return'';const d=new Date(ts);return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function money(n){return cur.cur+' '+(Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:1});}
+function tripTotal(t){return t.items.reduce((s,i)=>s+(+i.amount||0),0);}
+
+/* ---- 計算 ---- */
+function calc(){
+  const r={}; cur.people.forEach(p=>r[p]={share:0,paid:0});
+  cur.items.forEach(it=>{
+    const sh=(it.sharedBy||[]).filter(p=>cur.people.includes(p));
+    if(sh.length){const per=it.amount/sh.length; sh.forEach(p=>r[p].share+=per);}
+    if(it.payer&&r[it.payer]) r[it.payer].paid+=it.amount;
+  });
+  cur.people.forEach(p=>r[p].bal=r[p].paid-r[p].share);
+  return r;
+}
+function settlements(r){
+  const cred=[],deb=[];
+  cur.people.forEach(p=>{const b=Math.round(r[p].bal*100)/100;
+    if(b>0.009)cred.push({p,v:b}); else if(b<-0.009)deb.push({p,v:-b});});
+  cred.sort((a,b)=>b.v-a.v); deb.sort((a,b)=>b.v-a.v);
+  const out=[];let i=0,j=0;
+  while(i<deb.length&&j<cred.length){
+    const m=Math.min(deb[i].v,cred[j].v);
+    out.push({from:deb[i].p,to:cred[j].p,amt:m});
+    deb[i].v-=m;cred[j].v-=m;
+    if(deb[i].v<0.01)i++; if(cred[j].v<0.01)j++;
+  }
+  return out;
+}
+
+/* ---- 渲染 ---- */
+function render(){
+  const sel=document.getElementById('tripSel');
+  sel.innerHTML=db.trips.map((t,i)=>`<option value="${i}" ${i===db.cur?'selected':''}>${esc(t.name)}</option>`).join('');
+  document.getElementById('curLabel').textContent=cur.cur;
+
+  const pc=document.getElementById('people');
+  pc.innerHTML=cur.people.map(p=>`<div class="chip">${esc(p)}<span class="x" onclick="delPerson('${esc(p)}')">✕</span></div>`).join('')||'<div class="empty">尚未加入任何人</div>';
+
+  const ic=document.getElementById('items');
+  if(!cur.items.length){ic.innerHTML='<div class="empty">還沒有消費記錄，點下方「記一筆」開始</div>';}
+  else ic.innerHTML=cur.items.map(it=>{
+    const sh=(it.sharedBy||[]); const per=sh.length?it.amount/sh.length:0;
+    return `<div class="item">
+      <div class="row1"><div class="nm">${esc(it.name)}</div><div class="amt">${money(it.amount)}</div></div>
+      <div class="meta">墊付：<b>${esc(it.payer||'—')}</b> ・ 分攤：${sh.map(esc).join('、')||'—'} ${sh.length>1?`（每人 ${money(per)}）`:''}</div>
+      ${it.ts?`<div class="time">🕒 ${fmtTime(it.ts)}</div>`:''}
+      <div class="acts"><span onclick="openItem('${it.id}')">✏️ 編輯</span><span class="del" onclick="delItem('${it.id}')">🗑 刪除</span></div>
+    </div>`;}).join('');
+
+  const total=tripTotal(cur);
+  document.getElementById('sTotal').textContent=Math.round(total);
+  document.getElementById('sCount').textContent=cur.items.length;
+  document.getElementById('sPpl').textContent=cur.people.length;
+
+  const r=calc();
+  const pcEl=document.getElementById('persons');
+  pcEl.innerHTML=cur.people.length?cur.people.map(p=>{
+    const b=r[p].bal, cls=b>0.01?'pos':(b<-0.01?'neg':'');
+    const tag=b>0.01?`應收回 ${money(b)}`:(b<-0.01?`還需付 ${money(-b)}`:'已結清');
+    return `<div class="person-row">
+      <div><div class="nm">${esc(p)}</div><div class="det">應付 ${money(r[p].share)} ・ 已墊付 ${money(r[p].paid)}</div></div>
+      <div class="bal ${cls}">${tag}</div></div>`;
+  }).join(''):'<div class="empty">尚未加入人員</div>';
+
+  const st=settlements(r);
+  const sc=document.getElementById('settle');
+  if(!st.length){sc.innerHTML='<div class="empty">無需結算（或還沒設定墊付人）</div>';}
+  else sc.innerHTML=st.map(s=>`<div class="settle">${esc(s.from)} <span class="ar">→</span> ${esc(s.to)} <span class="m">${money(s.amt)}</span></div>`).join('');
+
+  const hc=document.getElementById('history');
+  hc.innerHTML=db.trips.map((t,i)=>{
+    const isCur=i===db.cur;
+    return `<div class="hist ${isCur?'on':''}" onclick="switchTrip(${i})">
+      <div><div class="hnm">${esc(t.name)}${isCur?'<span class="badge">目前</span>':''}</div>
+      <div class="hd">${t.date||''} ・ ${t.items.length} 筆 ・ ${t.people.length} 人</div></div>
+      <div class="ht">${t.cur} ${Math.round(tripTotal(t))}</div></div>`;
+  }).join('');
+}
+function esc(s){return(s+'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function unesc(s){return(s+'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
+
+/* ---- 彈窗 ---- */
+function open_(id){document.getElementById(id).classList.add('on');}
+function close_(id){document.getElementById(id).classList.remove('on');}
+function openMenu(){open_('mMenu');}
+
+function openItem(id){
+  if(!cur.people.length){myAlert('請先新增人員','請先在上方新增參與的人');return;}
+  editId=id||null;
+  const payer=document.getElementById('iPayer');
+  payer.innerHTML='<option value="">（暫不設定）</option>'+cur.people.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
+  if(id){
+    const it=cur.items.find(x=>x.id===id);
+    document.getElementById('itemTitle').textContent='編輯';
+    iName.value=it.name; iAmt.value=it.amount; payer.value=it.payer||'';
+    selWho=[...(it.sharedBy||[])];
+  }else{
+    document.getElementById('itemTitle').textContent='記一筆';
+    iName.value='';iAmt.value='';payer.value='';
+    selWho=[...cur.people];
+  }
+  renderWho();
+  open_('mItem');
+  setTimeout(()=>iName.focus(),200);
+}
+function renderWho(){
+  const w=document.getElementById('iWho');
+  w.innerHTML=`<div class="allbtn" onclick="toggleAll()">${selWho.length===cur.people.length?'全不選':'全選'}</div>`+
+    cur.people.map(p=>`<div class="p ${selWho.includes(p)?'on':''}" onclick="togWho('${esc(p)}')">${esc(p)}</div>`).join('');
+}
+function togWho(p){p=unesc(p);if(selWho.includes(p))selWho=selWho.filter(x=>x!==p);else selWho.push(p);renderWho();}
+function toggleAll(){selWho=selWho.length===cur.people.length?[]:[...cur.people];renderWho();}
+
+async function saveItem(){
+  const name=iName.value.trim(); const amt=parseFloat(iAmt.value);
+  if(!name){await myAlert('請輸入項目名稱');return;}
+  if(!(amt>0)){await myAlert('請輸入正確金額');return;}
+  if(!selWho.length){await myAlert('請至少選一個分攤的人');return;}
+  const payer=document.getElementById('iPayer').value;
+  if(editId){
+    const it=cur.items.find(x=>x.id===editId);
+    it.name=name;it.amount=amt;it.payer=payer;it.sharedBy=[...selWho];
+  }else{
+    cur.items.push({id:uid(),name,amount:amt,payer,sharedBy:[...selWho],ts:Date.now()});
+  }
+  save();render();close_('mItem');
+}
+async function delItem(id){
+  const ok=await myConfirm('確定刪除？','這筆消費將被移除');
+  if(ok){cur.items=cur.items.filter(x=>x.id!==id);save();render();}
+}
+
+/* ---- 人員 ---- */
+function quickAdd(){
+  const el=document.getElementById('pQuick');
+  const n=el.value.trim();
+  if(!n)return;
+  if(cur.people.includes(n)){myAlert('重複','已經有這個人了');return;}
+  cur.people.push(n);el.value='';save();render();el.focus();
+}
+async function delPerson(p){
+  p=unesc(p);
+  const ok=await myConfirm('移除 '+p+'？','相關消費裡的分攤/墊付會一併清除');
+  if(!ok)return;
+  cur.people=cur.people.filter(x=>x!==p);
+  cur.items.forEach(it=>{it.sharedBy=(it.sharedBy||[]).filter(x=>x!==p);if(it.payer===p)it.payer='';});
+  cur.items=cur.items.filter(it=>(it.sharedBy||[]).length);
+  save();render();
+}
+
+/* ---- 行程管理 ---- */
+function switchTrip(i){db.cur=+i;cur=db.trips[db.cur];save();render();window.scrollTo({top:0,behavior:'smooth'});}
+
+async function newTrip(){
+  const n=await myPrompt('新行程名稱','出遊 '+(db.trips.length+1));
+  if(!n)return;
+  db.trips.push(blankTrip(n.trim()));db.cur=db.trips.length-1;cur=db.trips[db.cur];save();render();close_('mMenu');
+}
+async function renameTrip(){
+  const n=await myPrompt('重新命名',cur.name);
+  if(!n)return;cur.name=n.trim();save();render();close_('mMenu');
+}
+async function changeCurrency(){
+  const c=await myPrompt('貨幣單位（例如 THB / RMB / NT$ / USD）',cur.cur);
+  if(!c)return;cur.cur=c.trim();save();render();close_('mMenu');
+}
+async function delTrip(){
+  if(db.trips.length<=1){await myAlert('無法刪除','至少保留一個行程');return;}
+  const ok=await myConfirm('刪除「'+cur.name+'」？','此操作無法復原');
+  if(!ok)return;
+  db.trips.splice(db.cur,1);db.cur=0;cur=db.trips[0];save();render();close_('mMenu');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='分帳備份.json';a.click();
+  close_('mMenu');
+}
+function triggerImport(){
+  document.getElementById('importFile').click();
+}
+async function importData(e){
+  const file=e.target.files[0];if(!file)return;
+  try{
+    const text=await file.text();
+    const parsed=JSON.parse(text);
+    if(!parsed.trips){await myAlert('格式錯誤','這個 JSON 不是本 App 的備份格式');return;}
+    const ok=await myConfirm('匯入備份？','目前資料將被取代，確定嗎？');
+    if(!ok)return;
+    db=parsed;cur=db.trips[db.cur||0]||db.trips[0];save();render();close_('mMenu');
+    await myAlert('匯入成功！','資料已還原');
+  }catch(err){
+    await myAlert('匯入失敗',err.message);
+  }
+  e.target.value='';
+}
+
+document.querySelectorAll('.mask').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');}));
+
+load();render();
+</script>
+</body>
+</html>
