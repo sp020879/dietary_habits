@@ -122,6 +122,7 @@
   <div class="err" id="lErr"></div>
   <button class="login-btn" id="lBtn" onclick="doLogin()">登入</button>
   <div class="switch" onclick="toggleMode()">還沒有帳號？<b>立即註冊</b></div>
+  <div class="switch" style="margin-top:10px" onclick="doForgot()">忘記密碼？<b>重設</b></div>
 </div>
 
 <header>
@@ -223,6 +224,15 @@ function toggleMode(){
   document.getElementById('loginSub').textContent=isRegMode?'建立新帳號':'登入以雲端備份你的分帳資料';
   document.querySelector('#loginPage .switch').innerHTML=isRegMode?'已有帳號？<b>直接登入</b>':'還沒有帳號？<b>立即註冊</b>';
   document.getElementById('lErr').textContent='';
+}
+async function doForgot(){
+  const email=document.getElementById('lEmail').value.trim();
+  if(!email){document.getElementById('lErr').textContent='請先輸入 Email';return;}
+  try{
+    await fetch(SB_URL+'/auth/v1/recover',{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email})});
+    document.getElementById('lErr').style.color='var(--green)';
+    document.getElementById('lErr').textContent='重設信已寄出，請檢查信箱';
+  }catch(e){document.getElementById('lErr').textContent='寄送失敗，請稍後再試';}
 }
 async function doLogin(){
   const email=document.getElementById('lEmail').value.trim();
