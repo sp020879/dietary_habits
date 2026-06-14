@@ -101,6 +101,10 @@
   .addp-row{display:flex;gap:8px;}
   .addp-row input{flex:1;}
   .addp-row button{padding:0 18px;border:none;background:var(--blue);color:#fff;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer;}
+  .quick-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px;}
+  .quick-tag{padding:7px 14px;border:1.5px solid var(--line);border-radius:20px;font-size:14px;background:#fff;cursor:pointer;color:var(--ink);}
+  .quick-tag.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600;}
+  textarea.f{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:#fff;color:var(--ink);resize:none;height:72px;font-family:inherit;}
 
   /* 自訂彈窗（取代 prompt/confirm/alert） */
   .dlg-mask{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:60;display:none;align-items:center;justify-content:center;padding:20px;}
@@ -168,7 +172,10 @@
   <div class="sheet">
     <h3 id="itemTitle">記一筆</h3>
     <label class="f">項目名稱</label>
-    <input class="f" id="iName" placeholder="例如：肉骨茶、計程車">
+    <div class="quick-tags" id="quickTags"></div>
+    <input class="f" id="iName" placeholder="或自行輸入名稱">
+    <label class="f">備註（選填）</label>
+    <textarea class="f" id="iNote" placeholder="例如：在 MBK 吃的、Grab 車資"></textarea>
     <label class="f">金額</label>
     <input class="f" id="iAmt" type="number" inputmode="decimal" placeholder="0">
     <label class="f">誰先付的錢（墊付人）</label>
@@ -214,6 +221,18 @@
 const KEY='split_app_v1';
 let db, cur;
 let editId=null, selWho=[];
+const QUICK=['交通','午餐','晚餐','早餐','咖啡','甜點'];
+
+function renderQuickTags(){
+  const c=document.getElementById('quickTags');
+  const v=document.getElementById('iName').value.trim();
+  c.innerHTML=QUICK.map(t=>`<div class="quick-tag ${v===t?'on':''}" onclick="pickTag('${t}')">${t}</div>`).join('');
+}
+function pickTag(t){
+  const inp=document.getElementById('iName');
+  inp.value=inp.value.trim()===t?'':t;
+  renderQuickTags();
+}
 
 /* ---- 自訂對話框（取代 alert/confirm/prompt） ---- */
 let dlgResolve=()=>{};
@@ -319,6 +338,7 @@ function render(){
     return `<div class="item">
       <div class="row1"><div class="nm">${esc(it.name)}</div><div class="amt">${money(it.amount)}</div></div>
       <div class="meta">墊付：<b>${esc(it.payer||'—')}</b> ・ 分攤：${sh.map(esc).join('、')||'—'} ${sh.length>1?`（每人 ${money(per)}）`:''}</div>
+      ${it.note?`<div class="time">📝 ${esc(it.note)}</div>`:''}
       ${it.ts?`<div class="time">🕒 ${fmtTime(it.ts)}</div>`:''}
       <div class="acts"><span onclick="openItem('${it.id}')">✏️ 編輯</span><span class="del" onclick="delItem('${it.id}')">🗑 刪除</span></div>
     </div>`;}).join('');
@@ -369,12 +389,15 @@ function openItem(id){
     const it=cur.items.find(x=>x.id===id);
     document.getElementById('itemTitle').textContent='編輯';
     iName.value=it.name; iAmt.value=it.amount; payer.value=it.payer||'';
+    document.getElementById('iNote').value=it.note||'';
     selWho=[...(it.sharedBy||[])];
   }else{
     document.getElementById('itemTitle').textContent='記一筆';
     iName.value='';iAmt.value='';payer.value='';
+    document.getElementById('iNote').value='';
     selWho=[...cur.people];
   }
+  renderQuickTags();
   renderWho();
   open_('mItem');
   setTimeout(()=>iName.focus(),200);
@@ -393,11 +416,12 @@ async function saveItem(){
   if(!(amt>0)){await myAlert('請輸入正確金額');return;}
   if(!selWho.length){await myAlert('請至少選一個分攤的人');return;}
   const payer=document.getElementById('iPayer').value;
+  const note=document.getElementById('iNote').value.trim();
   if(editId){
     const it=cur.items.find(x=>x.id===editId);
-    it.name=name;it.amount=amt;it.payer=payer;it.sharedBy=[...selWho];
+    it.name=name;it.amount=amt;it.payer=payer;it.sharedBy=[...selWho];it.note=note;
   }else{
-    cur.items.push({id:uid(),name,amount:amt,payer,sharedBy:[...selWho],ts:Date.now()});
+    cur.items.push({id:uid(),name,amount:amt,payer,sharedBy:[...selWho],note,ts:Date.now()});
   }
   save();render();close_('mItem');
 }
