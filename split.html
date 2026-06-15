@@ -149,7 +149,11 @@
   </div>
   <div class="card"><h2>消費明細</h2><div id="items"></div></div>
   <div class="card"><h2>每人應付</h2><div id="persons"></div></div>
-  <div class="card"><h2>結算（誰付給誰）</h2><div id="settle"></div></div>
+  <div class="card">
+    <h2>結算（誰付給誰）</h2>
+    <div id="settle"></div>
+    <button class="btn pri" style="margin-top:12px;font-size:15px" onclick="shareSettle()">📤 分享結算明細</button>
+  </div>
   <div class="card">
     <h2>歷史紀錄　<span style="font-weight:400;font-size:12px">點一筆即可切換</span></h2>
     <div id="history"></div>
@@ -167,8 +171,8 @@
     <input class="f" id="iName" placeholder="或自行輸入名稱">
     <label class="f">備註（選填）</label>
     <textarea class="f" id="iNote" placeholder="例如：在 MBK 吃的、Grab 車資"></textarea>
-    <label class="f">金額</label>
-    <input class="f" id="iAmt" type="number" inputmode="decimal" placeholder="0">
+    <label class="f">金額　<span id="amtPreview" style="color:var(--blue);font-weight:700;font-size:14px"></span></label>
+    <input class="f" id="iAmt" type="text" inputmode="decimal" placeholder="例如 50+83 或 200-30" oninput="previewAmt()">
     <label class="f">誰先付的錢（墊付人）</label>
     <select class="f" id="iPayer"></select>
     <label class="f">這筆由誰分攤（平均分）</label>
@@ -249,6 +253,8 @@ async function doLogin(){
       sbToken=data.access_token;
       sbUserId=data.user?.id;
       sbUserEmail=data.user?.email||email;
+      // 記住登入
+      try{localStorage.setItem('sb_token',sbToken);localStorage.setItem('sb_email',sbUserEmail);}catch(e){}
       document.getElementById('loginPage').style.display='none';
       document.getElementById('userEmail').textContent=sbUserEmail;
       await loadFromCloud();
@@ -263,6 +269,7 @@ async function doLogin(){
 }
 async function doLogout(){
   sbToken=null;sbUserId=null;
+  try{localStorage.removeItem('sb_token');localStorage.removeItem('sb_email');}catch(e){}
   db=null;cur=null;
   document.getElementById('loginPage').style.display='flex';
   document.getElementById('lPass').value='';
@@ -420,6 +427,57 @@ async function myAlert(title,msg=''){await showDlg({title,msg,showCancel:false,o
 async function myConfirm(title,msg=''){return await showDlg({title,msg,okText:'確定',okDanger:true});}
 async function myPrompt(title,defaultVal=''){return await showDlg({title,input:true,inputVal:defaultVal,okText:'確定'});}
 
+function shareSettle(){
+  const r=calc();
+  const st=settlements(r);
+  const total=tripTotal(cur);
+  let txt='【出遊分帳結算 🌿】\n';
+  txt+=cur.name+(cur.date?' '+cur.date:'')+'\n';
+  txt+='總花費 '+cur.cur+' '+Math.round(total)+'\n';
+  txt+='\n📋 消費明細\n';
+  cur.items.forEach(it=>{
+    const sh=(it.sharedBy||[]);
+    txt+='• '+it.name+' '+cur.cur+' '+it.amount;
+    if(it.payer) txt+='｜墊付：'+it.payer;
+    if(sh.length) txt+='｜分攤：'+sh.join('、');
+    if(it.note) txt+='｜'+it.note;
+    txt+='\n';
+  });
+  txt+='\n👤 每人應付\n';
+  cur.people.forEach(p=>{
+    const b=r[p].bal;
+    const tag=b>0.01?'應收回 '+cur.cur+' '+Math.round(b*10)/10:(b<-0.01?'還需付 '+cur.cur+' '+Math.round(-b*10)/10:'已結清');
+    txt+='• '+p+' 墊付 '+cur.cur+' '+Math.round(r[p].paid*10)/10+' → '+tag+'\n';
+  });
+  if(st.length){
+    txt+='\n💸 結算\n';
+    st.forEach(s=>{txt+='• '+s.from+' → '+s.to+'  '+cur.cur+' '+Math.round(s.amt*10)/10+'\n';});
+  }
+  txt+='\n由 出遊分帳 App 計算';
+  if(navigator.share){
+    navigator.share({title:'出遊分帳結算',text:txt});
+  } else {
+    navigator.clipboard.writeText(txt).then(()=>myAlert('已複製','結算明細已複製到剪貼簿，可貼到 LINE / WhatsApp'));
+  }
+}
+function previewAmt(){
+  const v=document.getElementById('iAmt').value.trim();
+  const el=document.getElementById('amtPreview');
+  if(!v){el.textContent='';return;}
+  try{
+    const safe=v.replace(/[^0-9+\-*/.]/g,'');
+    const result=Function('"use strict";return ('+safe+')')();
+    if(isFinite(result)&&result>0){el.textContent='= '+Math.round(result*100)/100;}
+    else{el.textContent='';}
+  }catch(e){el.textContent='';}
+}
+function parseAmt(v){
+  try{
+    const safe=v.replace(/[^0-9+\-*/.]/g,'');
+    const result=Function('"use strict";return ('+safe+')')();
+    return isFinite(result)?result:NaN;
+  }catch(e){return NaN;}
+}
 /* ---- 快速標籤 ---- */
 function renderQuickTags(){
   const v=document.getElementById('iName').value.trim();
@@ -454,7 +512,7 @@ function renderWho(){
 function togWho(p){p=unesc(p);if(selWho.includes(p))selWho=selWho.filter(x=>x!==p);else selWho.push(p);renderWho();}
 function toggleAll(){selWho=selWho.length===cur.people.length?[]:[...cur.people];renderWho();}
 async function saveItem(){
-  const name=iName.value.trim();const amt=parseFloat(iAmt.value);
+  const name=iName.value.trim();const amt=parseAmt(iAmt.value);
   if(!name){await myAlert('請輸入項目名稱');return;}
   if(!(amt>0)){await myAlert('請輸入正確金額');return;}
   if(!selWho.length){await myAlert('請至少選一個分攤的人');return;}
@@ -511,6 +569,30 @@ async function delTrip(){
 
 document.querySelectorAll('.mask').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');}));
 document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// 自動還原登入
+(async()=>{
+  try{
+    const token=localStorage.getItem('sb_token');
+    const email=localStorage.getItem('sb_email');
+    if(token){
+      sbToken=token;
+      // 驗證token是否還有效
+      const res=await sbFetch('/auth/v1/user');
+      const data=await res.json();
+      if(data.id){
+        sbUserId=data.id;
+        sbUserEmail=data.email||email||'';
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('userEmail').textContent=sbUserEmail;
+        await loadFromCloud();
+        return;
+      }
+    }
+  }catch(e){}
+  // token無效，清除
+  try{localStorage.removeItem('sb_token');localStorage.removeItem('sb_email');}catch(e){}
+})();
 </script>
 </body>
 </html>
