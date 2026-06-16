@@ -109,38 +109,37 @@
   .sync-dot.ok{background:#7d977f;}.sync-dot.err{background:var(--red);}.sync-dot.ing{background:var(--amber);}
   #userBar{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.85;margin-top:8px;}
   /* 結算卡片 */
-  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center;}
+  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:50;display:none;align-items:center;justify-content:center;padding:20px;}
   #cardMask.on{display:flex;}
-  #cardWrapper{width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column;border-radius:20px 20px 0 0;overflow:hidden;}
-  #shareCard{background:#fff;overflow-y:auto;flex:1;}
-  #shareCard{border-radius:0;}
-  .card-head{background:linear-gradient(135deg,#7d977f,#647f68);padding:20px 18px 16px;color:#fff;}
-  .card-head .ctitle{font-size:19px;font-weight:700;}
-  .card-head .csub{font-size:12px;opacity:.8;margin-top:2px;}
-  .card-head .ctotal{font-size:30px;font-weight:700;margin-top:10px;}
-  .card-body{padding:16px 18px 8px;}
-  .card-section{margin-bottom:14px;}
-  .card-section h4{font-size:11px;color:#9a9082;font-weight:700;letter-spacing:.5px;margin:0 0 6px;}
-  .card-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid #f0e8da;gap:8px;}
+  #cardWrapper{width:100%;max-width:360px;display:flex;flex-direction:column;border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.4);}
+  #shareCard{background:#fffdf9;overflow-y:auto;max-height:72vh;}
+  .card-head{background:linear-gradient(135deg,#7d977f,#4a6b55);padding:22px 20px 18px;color:#fff;}
+  .card-head .ctitle{font-size:18px;font-weight:700;letter-spacing:.3px;}
+  .card-head .csub{font-size:12px;opacity:.75;margin-top:3px;}
+  .card-head .ctotal{font-size:26px;font-weight:700;margin-top:12px;letter-spacing:.5px;}
+  .card-body{padding:14px 16px 10px;background:#fffdf9;}
+  .card-section{margin-bottom:12px;}
+  .card-section h4{font-size:11px;color:#9a9082;font-weight:700;letter-spacing:.8px;margin:0 0 8px;text-transform:uppercase;border-bottom:1px solid #f0e8da;padding-bottom:6px;}
+  .card-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #f5ede0;gap:10px;}
   .card-row:last-child{border-bottom:none;}
-  .card-row .lft{flex:1;}
-  .card-row .nm{font-size:14px;font-weight:600;}
-  .card-row .sub{font-size:11px;color:#aaa;margin-top:2px;}
-  .card-row .val{font-size:14px;font-weight:700;white-space:nowrap;}
+  .card-row .lft{flex:1;min-width:0;}
+  .card-row .nm{font-size:14px;font-weight:600;color:#3a3630;}
+  .card-row .sub{font-size:11px;color:#b0a090;margin-top:2px;line-height:1.4;}
+  .card-row .val{font-size:14px;font-weight:700;white-space:nowrap;color:#3a3630;}
   .card-row .val.red{color:#b67d70;}
-  .card-row .val.grn{color:#7d977f;}
-  .card-row .val.gry{color:#aaa;font-weight:400;}
-  .settle-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid #f0e8da;font-size:14px;gap:4px;}
+  .card-row .val.grn{color:#5a8a5a;}
+  .card-row .val.gry{color:#bbb;font-weight:400;}
+  .settle-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #f5ede0;font-size:14px;gap:6px;}
   .settle-row:last-child{border-bottom:none;}
-  .settle-row .arrow{color:#7d977f;font-weight:700;}
-  .settle-row .samt{margin-left:auto;font-weight:700;}
-  .card-foot{background:#fff;padding:10px 18px calc(18px + env(safe-area-inset-bottom));display:flex;gap:8px;border-top:1px solid #f0e8da;flex-shrink:0;}
-  .card-foot button{flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;}
+  .settle-row .from{font-weight:600;color:#3a3630;}
+  .settle-row .arrow{color:#7d977f;font-size:16px;}
+  .settle-row .to{font-weight:600;color:#3a3630;}
+  .settle-row .samt{margin-left:auto;font-weight:700;color:#3a3630;}
+  .card-brand{text-align:center;font-size:11px;color:#d0c8b8;padding:8px 0 4px;letter-spacing:.5px;}
+  .card-foot{background:#fff;padding:12px 16px 20px;display:flex;gap:8px;border-top:1px solid #f0e8da;}
+  .card-foot button{flex:1;padding:12px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
   .card-foot .cls{background:#f3f4f6;color:#4a4640;}
   .card-foot .shr{background:#7d977f;color:#fff;}
-  /* 結算卡片 */
-  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px;}
-  #cardMask.on{display:flex;}
   #shareCard{background:#fff;border-radius:20px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.25);}
   .card-head{background:linear-gradient(135deg,#7d977f,#647f68);padding:20px 18px 16px;color:#fff;}
   .card-head .ctitle{font-size:20px;font-weight:700;margin-bottom:4px;}
@@ -240,7 +239,7 @@
           <h4>💸 結算</h4>
           <div id="cSettle"></div>
         </div>
-        <div style="text-align:center;font-size:11px;color:#ccc;margin-top:8px;padding-bottom:4px">錢去哪了？🍃</div>
+        <div class="card-brand">錢去哪了？🍃</div>
       </div>
     </div>
     <div class="card-foot">
@@ -644,7 +643,7 @@ function showCard(){
 
   document.getElementById('cSettle').innerHTML=st.length?st.map(s=>`
     <div class="settle-row">
-      <span>${esc(s.from)}</span><span class="arrow">→</span><span>${esc(s.to)}</span>
+      <span class="from">${esc(s.from)}</span><span class="arrow">→</span><span class="to">${esc(s.to)}</span>
       <span class="samt">${fmt(s.amt)}</span>
     </div>`).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無需結算</div>';
 
