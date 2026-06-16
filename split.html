@@ -109,9 +109,11 @@
   .sync-dot.ok{background:#7d977f;}.sync-dot.err{background:var(--red);}.sync-dot.ing{background:var(--amber);}
   #userBar{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.85;margin-top:8px;}
   /* 結算卡片 */
-  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px;}
+  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center;}
   #cardMask.on{display:flex;}
-  #shareCard{background:#fff;border-radius:20px 20px 0 0;overflow:hidden;}
+  #cardWrapper{width:100%;max-width:480px;max-height:88vh;display:flex;flex-direction:column;border-radius:20px 20px 0 0;overflow:hidden;}
+  #shareCard{background:#fff;overflow-y:auto;flex:1;}
+  #shareCard{border-radius:0;}
   .card-head{background:linear-gradient(135deg,#7d977f,#647f68);padding:20px 18px 16px;color:#fff;}
   .card-head .ctitle{font-size:19px;font-weight:700;}
   .card-head .csub{font-size:12px;opacity:.8;margin-top:2px;}
@@ -132,7 +134,7 @@
   .settle-row:last-child{border-bottom:none;}
   .settle-row .arrow{color:#7d977f;font-weight:700;}
   .settle-row .samt{margin-left:auto;font-weight:700;}
-  .card-foot{background:#fff;border-radius:0 0 20px 20px;padding:10px 18px 18px;display:flex;gap:8px;}
+  .card-foot{background:#fff;padding:10px 18px calc(18px + env(safe-area-inset-bottom));display:flex;gap:8px;border-top:1px solid #f0e8da;flex-shrink:0;}
   .card-foot button{flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;}
   .card-foot .cls{background:#f3f4f6;color:#4a4640;}
   .card-foot .shr{background:#7d977f;color:#fff;}
@@ -218,7 +220,7 @@
 
 <!-- 結算卡片 -->
 <div id="cardMask" onclick="if(event.target===this)this.classList.remove('on')">
-  <div style="width:100%;max-width:380px;overflow-y:auto;max-height:92vh;border-radius:20px;">
+  <div id="cardWrapper">
     <div id="shareCard">
       <div class="card-head">
         <div class="ctitle" id="cTitle"></div>
@@ -238,11 +240,12 @@
           <h4>💸 結算</h4>
           <div id="cSettle"></div>
         </div>
-        <div style="text-align:center;font-size:11px;color:#ccc;margin-top:8px">錢去哪了？🍃</div>
+        <div style="text-align:center;font-size:11px;color:#ccc;margin-top:8px;padding-bottom:4px">錢去哪了？🍃</div>
       </div>
     </div>
     <div class="card-foot">
       <button class="cls" onclick="document.getElementById('cardMask').classList.remove('on')">關閉</button>
+      <button class="shr" onclick="doShareText()">📝 文字版</button>
       <button class="shr" onclick="doShare()">📤 分享</button>
     </div>
   </div>
@@ -646,6 +649,41 @@ function showCard(){
     </div>`).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無需結算</div>';
 
   document.getElementById('cardMask').classList.add('on');
+}
+
+async function doShareText(){
+  const r=calc();
+  const st=settlements(r);
+  const total=tripTotal(cur);
+  const fmt=n=>cur.cur+' '+Math.round(n).toLocaleString();
+  let txt='【錢去哪了？🍃】'+cur.name+'\n';
+  txt+=(cur.date||'')+'\n';
+  txt+='總花費 '+fmt(total)+'\n';
+  txt+='\n📋 消費明細\n';
+  cur.items.forEach(it=>{
+    const sh=(it.sharedBy||[]);
+    txt+='• '+it.name+' '+it.amount;
+    if(it.payer) txt+='｜'+it.payer+'墊';
+    if(sh.length) txt+='｜'+sh.join('、')+'分';
+    if(it.note) txt+='｜'+it.note;
+    txt+='\n';
+  });
+  txt+='\n👤 每人應付\n';
+  cur.people.forEach(p=>{
+    const b=r[p].bal;
+    const tag=b>0.01?'應收回 '+fmt(b):(b<-0.01?'還需付 '+fmt(-b):'已結清');
+    txt+='• '+p+'  '+tag+'\n';
+  });
+  if(st.length){
+    txt+='\n💸 結算\n';
+    st.forEach(s=>txt+='• '+s.from+' → '+s.to+'  '+fmt(s.amt)+'\n');
+  }
+  if(navigator.share){
+    navigator.share({title:'錢去哪了？',text:txt});
+  } else {
+    await navigator.clipboard.writeText(txt);
+    myAlert('已複製','可貼到 LINE / WhatsApp');
+  }
 }
 
 async function doShare(){
