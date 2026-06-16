@@ -108,6 +108,60 @@
   .sync-dot{width:8px;height:8px;border-radius:50%;background:#aaa;display:inline-block;margin-left:6px;}
   .sync-dot.ok{background:#7d977f;}.sync-dot.err{background:var(--red);}.sync-dot.ing{background:var(--amber);}
   #userBar{display:flex;align-items:center;gap:6px;font-size:12px;opacity:.85;margin-top:8px;}
+  /* 結算卡片 */
+  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px;}
+  #cardMask.on{display:flex;}
+  #shareCard{background:#fff;border-radius:20px 20px 0 0;overflow:hidden;}
+  .card-head{background:linear-gradient(135deg,#7d977f,#647f68);padding:20px 18px 16px;color:#fff;}
+  .card-head .ctitle{font-size:19px;font-weight:700;}
+  .card-head .csub{font-size:12px;opacity:.8;margin-top:2px;}
+  .card-head .ctotal{font-size:30px;font-weight:700;margin-top:10px;}
+  .card-body{padding:16px 18px 8px;}
+  .card-section{margin-bottom:14px;}
+  .card-section h4{font-size:11px;color:#9a9082;font-weight:700;letter-spacing:.5px;margin:0 0 6px;}
+  .card-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid #f0e8da;gap:8px;}
+  .card-row:last-child{border-bottom:none;}
+  .card-row .lft{flex:1;}
+  .card-row .nm{font-size:14px;font-weight:600;}
+  .card-row .sub{font-size:11px;color:#aaa;margin-top:2px;}
+  .card-row .val{font-size:14px;font-weight:700;white-space:nowrap;}
+  .card-row .val.red{color:#b67d70;}
+  .card-row .val.grn{color:#7d977f;}
+  .card-row .val.gry{color:#aaa;font-weight:400;}
+  .settle-row{display:flex;align-items:center;padding:7px 0;border-bottom:1px solid #f0e8da;font-size:14px;gap:4px;}
+  .settle-row:last-child{border-bottom:none;}
+  .settle-row .arrow{color:#7d977f;font-weight:700;}
+  .settle-row .samt{margin-left:auto;font-weight:700;}
+  .card-foot{background:#fff;border-radius:0 0 20px 20px;padding:10px 18px 18px;display:flex;gap:8px;}
+  .card-foot button{flex:1;padding:12px;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;}
+  .card-foot .cls{background:#f3f4f6;color:#4a4640;}
+  .card-foot .shr{background:#7d977f;color:#fff;}
+  /* 結算卡片 */
+  #cardMask{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:center;justify-content:center;padding:16px;}
+  #cardMask.on{display:flex;}
+  #shareCard{background:#fff;border-radius:20px;width:100%;max-width:360px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.25);}
+  .card-head{background:linear-gradient(135deg,#7d977f,#647f68);padding:20px 18px 16px;color:#fff;}
+  .card-head .ctitle{font-size:20px;font-weight:700;margin-bottom:4px;}
+  .card-head .csub{font-size:13px;opacity:.85;}
+  .card-head .ctotal{font-size:28px;font-weight:700;margin-top:10px;}
+  .card-body{padding:16px 18px;}
+  .card-section{margin-bottom:14px;}
+  .card-section h4{font-size:12px;color:#9a9082;font-weight:700;letter-spacing:.5px;margin:0 0 8px;text-transform:uppercase;}
+  .card-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0e8da;}
+  .card-row:last-child{border-bottom:none;}
+  .card-row .nm{font-size:14px;font-weight:600;}
+  .card-row .val{font-size:14px;font-weight:700;}
+  .card-row .val.red{color:#b67d70;}
+  .card-row .val.grn{color:#7d977f;}
+  .card-row .val.gry{color:#aaa;}
+  .arrow{color:#7d977f;font-weight:700;margin:0 6px;}
+  .settle-row{display:flex;align-items:center;padding:8px 0;border-bottom:1px solid #f0e8da;font-size:14px;}
+  .settle-row:last-child{border-bottom:none;}
+  .settle-row .amt{margin-left:auto;font-weight:700;color:#4a4640;}
+  .card-foot{padding:10px 18px 16px;display:flex;gap:8px;}
+  .card-foot button{flex:1;padding:11px;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;}
+  .card-foot .cls{background:#f3f4f6;color:#4a4640;}
+  .card-foot .shr{background:#7d977f;color:#fff;}
 </style>
 </head>
 <body>
@@ -152,11 +206,7 @@
   <div class="card">
     <h2>結算（誰付給誰）</h2>
     <div id="settle"></div>
-    <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
-      <button class="btn pri" style="flex:1;font-size:13px;margin-top:0" onclick="shareSettle('A')">📤 簡潔版</button>
-      <button class="btn pri" style="flex:1;font-size:13px;margin-top:0" onclick="shareSettle('B')">📋 含明細</button>
-      <button class="btn pri" style="flex:1;font-size:13px;margin-top:0" onclick="shareSettle('C')">👤 逐人版</button>
-    </div>
+    <button class="btn pri" style="margin-top:12px;font-size:15px" onclick="showCard()">📸 產生結算卡片</button>
   </div>
   <div class="card">
     <h2>歷史紀錄　<span style="font-weight:400;font-size:12px">點一筆即可切換</span></h2>
@@ -165,6 +215,38 @@
 </main>
 
 <button class="fab" onclick="openItem()">＋ 記一筆</button>
+
+<!-- 結算卡片 -->
+<div id="cardMask" onclick="if(event.target===this)this.classList.remove('on')">
+  <div style="width:100%;max-width:380px;overflow-y:auto;max-height:92vh;border-radius:20px;">
+    <div id="shareCard">
+      <div class="card-head">
+        <div class="ctitle" id="cTitle"></div>
+        <div class="csub" id="cDate"></div>
+        <div class="ctotal" id="cTotal"></div>
+      </div>
+      <div class="card-body">
+        <div class="card-section">
+          <h4>📋 消費明細</h4>
+          <div id="cItems"></div>
+        </div>
+        <div class="card-section">
+          <h4>👤 每人應付</h4>
+          <div id="cPersons"></div>
+        </div>
+        <div class="card-section">
+          <h4>💸 結算</h4>
+          <div id="cSettle"></div>
+        </div>
+        <div style="text-align:center;font-size:11px;color:#ccc;margin-top:8px">錢去哪了？🍃</div>
+      </div>
+    </div>
+    <div class="card-foot">
+      <button class="cls" onclick="document.getElementById('cardMask').classList.remove('on')">關閉</button>
+      <button class="shr" onclick="doShare()">📤 分享</button>
+    </div>
+  </div>
+</div>
 
 <!-- 新增/編輯 消費 -->
 <div class="mask" id="mItem">
@@ -218,14 +300,12 @@ const SB_KEY='sb_publishable_BjOgs6fhvzn1C3XYAFa0UA_eUG72R6O';
 let sbToken=null, sbUserId=null, sbUserEmail='';
 let isRegMode=false;
 
-/* ---- Supabase fetch helpers ---- */
 async function sbFetch(path, opts={}){
   const headers={'Content-Type':'application/json','apikey':SB_KEY,...(sbToken?{'Authorization':'Bearer '+sbToken}:{}),...(opts.headers||{})};
   const res=await fetch(SB_URL+path,{...opts,headers});
   return res;
 }
 
-/* ---- 登入/註冊 ---- */
 function toggleMode(){
   isRegMode=!isRegMode;
   document.getElementById('lBtn').textContent=isRegMode?'註冊':'登入';
@@ -233,6 +313,7 @@ function toggleMode(){
   document.querySelector('#loginPage .switch').innerHTML=isRegMode?'已有帳號？<b>直接登入</b>':'還沒有帳號？<b>立即註冊</b>';
   document.getElementById('lErr').textContent='';
 }
+
 async function doForgot(){
   const email=document.getElementById('lEmail').value.trim();
   if(!email){document.getElementById('lErr').textContent='請先輸入 Email';return;}
@@ -242,11 +323,12 @@ async function doForgot(){
     document.getElementById('lErr').textContent='重設信已寄出，請檢查信箱';
   }catch(e){document.getElementById('lErr').textContent='寄送失敗，請稍後再試';}
 }
+
 async function doLogin(){
   const email=document.getElementById('lEmail').value.trim();
   const pass=document.getElementById('lPass').value;
   const errEl=document.getElementById('lErr');
-  errEl.textContent='';
+  errEl.textContent=''; errEl.style.color='var(--red)';
   if(!email||!pass){errEl.textContent='請輸入 Email 和密碼';return;}
   document.getElementById('lBtn').textContent='請稍候...';
   const endpoint=isRegMode?'/auth/v1/signup':'/auth/v1/token?grant_type=password';
@@ -254,34 +336,30 @@ async function doLogin(){
     const res=await fetch(SB_URL+endpoint,{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY},body:JSON.stringify({email,password:pass})});
     const data=await res.json();
     if(data.access_token){
-      sbToken=data.access_token;
-      sbUserId=data.user?.id;
-      sbUserEmail=data.user?.email||email;
-      // 記住登入
+      sbToken=data.access_token; sbUserId=data.user?.id; sbUserEmail=data.user?.email||email;
       try{localStorage.setItem('sb_token',sbToken);localStorage.setItem('sb_email',sbUserEmail);}catch(e){}
       document.getElementById('loginPage').style.display='none';
       document.getElementById('userEmail').textContent=sbUserEmail;
       await loadFromCloud();
     } else if(isRegMode&&data.id){
-      errEl.textContent='註冊成功！請登入';
-      isRegMode=false;toggleMode();
+      errEl.textContent='註冊成功！請登入'; isRegMode=false; toggleMode();
     } else {
       errEl.textContent=data.error_description||data.msg||'登入失敗，請確認帳號密碼';
     }
   }catch(e){errEl.textContent='網路錯誤，請稍後再試';}
   document.getElementById('lBtn').textContent=isRegMode?'註冊':'登入';
 }
+
 async function doLogout(){
-  sbToken=null;sbUserId=null;
+  sbToken=null; sbUserId=null;
   try{localStorage.removeItem('sb_token');localStorage.removeItem('sb_email');}catch(e){}
-  db=null;cur=null;
+  db=null; cur=null;
   document.getElementById('loginPage').style.display='flex';
   document.getElementById('lPass').value='';
   close_('mMenu');
 }
 
-/* ---- 雲端同步 ---- */
-function setSyncDot(state){const d=document.getElementById('syncDot');d.className='sync-dot '+state;}
+function setSyncDot(state){document.getElementById('syncDot').className='sync-dot '+state;}
 
 async function loadFromCloud(){
   setSyncDot('ing');
@@ -294,9 +372,7 @@ async function loadFromCloud(){
       db={cur:0,trips:[blankTrip('我的出遊')]};
       await saveToCloud(db.trips[0]);
     }
-    cur=db.trips[0];
-    render();
-    setSyncDot('ok');
+    cur=db.trips[0]; render(); setSyncDot('ok');
   }catch(e){setSyncDot('err');db={cur:0,trips:[blankTrip('我的出遊')]};cur=db.trips[0];render();}
 }
 
@@ -319,7 +395,6 @@ async function deleteFromCloud(trip){
   await sbFetch('/rest/v1/split_trips?id=eq.'+trip.id,{method:'DELETE'});
 }
 
-/* ---- 資料 ---- */
 let db,cur,editId=null,selWho=[];
 const QUICK=['交通','午餐','晚餐','早餐','咖啡','甜點'];
 
@@ -329,10 +404,8 @@ function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth
 function fmtTime(ts){if(!ts)return'';const d=new Date(ts);return(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function money(n){return cur.cur+' '+(Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:1});}
 function tripTotal(t){return t.items.reduce((s,i)=>s+(+i.amount||0),0);}
-
 function save(){saveToCloud(cur);}
 
-/* ---- 計算 ---- */
 function calc(){
   const r={};cur.people.forEach(p=>r[p]={share:0,paid:0});
   cur.items.forEach(it=>{
@@ -343,6 +416,7 @@ function calc(){
   cur.people.forEach(p=>r[p].bal=r[p].paid-r[p].share);
   return r;
 }
+
 function settlements(r){
   const cred=[],deb=[];
   cur.people.forEach(p=>{const b=Math.round(r[p].bal*100)/100;if(b>0.009)cred.push({p,v:b});else if(b<-0.009)deb.push({p,v:-b});});
@@ -357,13 +431,11 @@ function settlements(r){
   return out;
 }
 
-/* ---- 渲染 ---- */
 function render(){
   const sel=document.getElementById('tripSel');
   sel.innerHTML=db.trips.map((t,i)=>`<option value="${i}" ${i===db.cur?'selected':''}>${esc(t.name)}</option>`).join('');
   document.getElementById('curLabel').textContent=cur.cur;
-  const pc=document.getElementById('people');
-  pc.innerHTML=cur.people.map(p=>`<div class="chip">${esc(p)}<span class="x" onclick="delPerson('${esc(p)}')">✕</span></div>`).join('')||'<div class="empty">尚未加入任何人</div>';
+  document.getElementById('people').innerHTML=cur.people.map(p=>`<div class="chip">${esc(p)}<span class="x" onclick="delPerson('${esc(p)}')">✕</span></div>`).join('')||'<div class="empty">尚未加入任何人</div>';
   const ic=document.getElementById('items');
   if(!cur.items.length){ic.innerHTML='<div class="empty">還沒有消費記錄，點下方「記一筆」開始</div>';}
   else ic.innerHTML=cur.items.map(it=>{
@@ -396,7 +468,6 @@ function render(){
 function esc(s){return(s+'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function unesc(s){return(s+'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
 
-/* ---- 彈窗 ---- */
 function open_(id){document.getElementById(id).classList.add('on');}
 function close_(id){document.getElementById(id).classList.remove('on');}
 function openMenu(){open_('mMenu');}
@@ -431,77 +502,12 @@ async function myAlert(title,msg=''){await showDlg({title,msg,showCancel:false,o
 async function myConfirm(title,msg=''){return await showDlg({title,msg,okText:'確定',okDanger:true});}
 async function myPrompt(title,defaultVal=''){return await showDlg({title,input:true,inputVal:defaultVal,okText:'確定'});}
 
-function shareSettle(ver){
-  const r=calc();
-  const st=settlements(r);
-  const total=tripTotal(cur);
-  const fmt=n=>cur.cur+' '+Math.round(n).toLocaleString();
-  let txt='';
-
-  if(ver==='A'){
-    // 簡潔版
-    txt=`【錢去哪了？🍃】${cur.name}\n總花費 ${fmt(total)}\n`;
-    if(st.length){
-      txt+='\n💸 結算\n';
-      st.forEach(s=>txt+=`${s.from} → ${s.to}  ${fmt(s.amt)}\n`);
-    }
-    txt+='\n👤 每人應付\n';
-    cur.people.forEach(p=>{
-      const b=r[p].bal;
-      const tag=b>0.01?`應收回 ${fmt(b)}`:(b<-0.01?`還需付 ${fmt(-b)}`:'已結清');
-      txt+=`${p}  ${tag}\n`;
-    });
-
-  } else if(ver==='B'){
-    // 含明細版
-    txt=`【錢去哪了？🍃】${cur.name}  ${fmt(total)}\n`;
-    txt+='\n📋 明細\n';
-    cur.items.forEach(it=>{
-      const sh=(it.sharedBy||[]);
-      txt+=`${it.name} ${it.amount}`;
-      if(it.payer) txt+=`｜${it.payer}墊`;
-      if(sh.length) txt+=`｜${sh.join('、')}分`;
-      if(it.note) txt+=`｜${it.note}`;
-      txt+='\n';
-    });
-    if(st.length){
-      txt+='\n💸 結算\n';
-      st.forEach(s=>txt+=`${s.from} → ${s.to}  ${fmt(s.amt)}\n`);
-    }
-
-  } else if(ver==='C'){
-    // 逐人版
-    txt=`【錢去哪了？🍃】${cur.name}\n總花費 ${fmt(total)}\n\n`;
-    cur.people.forEach(p=>{
-      const b=r[p].bal;
-      if(b<-0.01){
-        const payTo=st.filter(s=>s.from===p);
-        txt+=`Hi ${p}，你這次的費用：\n`;
-        txt+=`應付總額  ${fmt(-b)}\n`;
-        payTo.forEach(s=>txt+=`請付給 ${s.to}  ${fmt(s.amt)}\n`);
-        // 明細
-        const myItems=cur.items.filter(it=>(it.sharedBy||[]).includes(p));
-        if(myItems.length){
-          txt+=`明細：\n`;
-          myItems.forEach(it=>{
-            const sh=(it.sharedBy||[]).length;
-            const per=Math.round(it.amount/sh*10)/10;
-            txt+=`  ${it.name} ${it.amount}÷${sh}人 = ${per}`;
-            if(it.note) txt+=` (${it.note})`;
-            txt+='\n';
-          });
-        }
-        txt+='\n';
-      }
-    });
-  }
-
-  if(navigator.share){
-    navigator.share({title:'錢去哪了？',text:txt});
-  } else {
-    navigator.clipboard.writeText(txt).then(()=>myAlert('已複製','可貼到 LINE / WhatsApp'));
-  }
+function renderQuickTags(){
+  const v=document.getElementById('iName').value.trim();
+  document.getElementById('quickTags').innerHTML=QUICK.map(t=>`<div class="quick-tag ${v===t?'on':''}" onclick="pickTag('${t}')">${t}</div>`).join('');
 }
+function pickTag(t){const inp=document.getElementById('iName');inp.value=inp.value.trim()===t?'':t;renderQuickTags();}
+
 function previewAmt(){
   const v=document.getElementById('iAmt').value.trim();
   const el=document.getElementById('amtPreview');
@@ -520,14 +526,7 @@ function parseAmt(v){
     return isFinite(result)?result:NaN;
   }catch(e){return NaN;}
 }
-/* ---- 快速標籤 ---- */
-function renderQuickTags(){
-  const v=document.getElementById('iName').value.trim();
-  document.getElementById('quickTags').innerHTML=QUICK.map(t=>`<div class="quick-tag ${v===t?'on':''}" onclick="pickTag('${t}')">${t}</div>`).join('');
-}
-function pickTag(t){const inp=document.getElementById('iName');inp.value=inp.value.trim()===t?'':t;renderQuickTags();}
 
-/* ---- 消費 ---- */
 function openItem(id){
   if(!cur.people.length){myAlert('請先新增人員','請先在上方新增參與的人');return;}
   editId=id||null;
@@ -568,7 +567,6 @@ async function delItem(id){
   if(await myConfirm('確定刪除？','這筆消費將被移除')){cur.items=cur.items.filter(x=>x.id!==id);save();render();}
 }
 
-/* ---- 人員 ---- */
 async function quickAdd(){
   const el=document.getElementById('pQuick');
   const n=el.value.trim();
@@ -585,7 +583,6 @@ async function delPerson(p){
   save();render();
 }
 
-/* ---- 行程 ---- */
 function switchTrip(i){db.cur=+i;cur=db.trips[db.cur];render();window.scrollTo({top:0,behavior:'smooth'});}
 async function newTrip(){
   const n=await myPrompt('新行程名稱','出遊 '+(db.trips.length+1));
@@ -609,30 +606,79 @@ async function delTrip(){
   db.trips.splice(db.cur,1);db.cur=0;cur=db.trips[0];render();close_('mMenu');
 }
 
+/* ---- 結算卡片 ---- */
+function showCard(){
+  const r=calc();
+  const st=settlements(r);
+  const total=tripTotal(cur);
+  const fmt=n=>cur.cur+' '+Math.round(n).toLocaleString();
+
+  document.getElementById('cTitle').textContent=cur.name;
+  document.getElementById('cDate').textContent=cur.date||'';
+  document.getElementById('cTotal').textContent='總花費 '+fmt(total);
+
+  document.getElementById('cItems').innerHTML=cur.items.length?cur.items.map(it=>{
+    const sh=(it.sharedBy||[]);
+    const per=sh.length?Math.round(it.amount/sh.length*10)/10:0;
+    return `<div class="card-row">
+      <div class="lft">
+        <div class="nm">${esc(it.name)}${it.note?` <span style="font-weight:400;color:#aaa;font-size:12px">· ${esc(it.note)}</span>`:''}</div>
+        <div class="sub">${it.payer?esc(it.payer)+'墊付':''} ${sh.length?'· '+sh.map(esc).join('、')+'分攤':''} ${sh.length>1?'· 每人 '+cur.cur+' '+per:''}</div>
+      </div>
+      <div class="val">${cur.cur} ${it.amount}</div>
+    </div>`;
+  }).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無消費記錄</div>';
+
+  document.getElementById('cPersons').innerHTML=cur.people.map(p=>{
+    const b=r[p].bal;
+    const cls=b>0.01?'grn':(b<-0.01?'red':'gry');
+    const tag=b>0.01?'應收回 '+fmt(b):(b<-0.01?'還需付 '+fmt(-b):'已結清');
+    return `<div class="card-row">
+      <div class="lft"><div class="nm">${esc(p)}</div><div class="sub">墊付 ${fmt(r[p].paid)} · 應付 ${fmt(r[p].share)}</div></div>
+      <div class="val ${cls}">${tag}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('cSettle').innerHTML=st.length?st.map(s=>`
+    <div class="settle-row">
+      <span>${esc(s.from)}</span><span class="arrow">→</span><span>${esc(s.to)}</span>
+      <span class="samt">${fmt(s.amt)}</span>
+    </div>`).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無需結算</div>';
+
+  document.getElementById('cardMask').classList.add('on');
+}
+
+async function doShare(){
+  if(navigator.share){
+    const r=calc();
+    const st=settlements(r);
+    const txt='【錢去哪了？🍃】'+cur.name+'\n總花費 '+cur.cur+' '+Math.round(tripTotal(cur))+'\n\n💸 結算\n'+
+      st.map(s=>s.from+' → '+s.to+'  '+cur.cur+' '+Math.round(s.amt)).join('\n');
+    navigator.share({title:'錢去哪了？',text:txt});
+  } else {
+    await myAlert('截圖分享','長按畫面截圖，再分享給朋友 📸');
+  }
+}
+
 document.querySelectorAll('.mask').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');}));
 document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 
-// 自動還原登入
 (async()=>{
   try{
     const token=localStorage.getItem('sb_token');
     const email=localStorage.getItem('sb_email');
     if(token){
       sbToken=token;
-      // 驗證token是否還有效
       const res=await sbFetch('/auth/v1/user');
       const data=await res.json();
       if(data.id){
-        sbUserId=data.id;
-        sbUserEmail=data.email||email||'';
+        sbUserId=data.id; sbUserEmail=data.email||email||'';
         document.getElementById('loginPage').style.display='none';
         document.getElementById('userEmail').textContent=sbUserEmail;
-        await loadFromCloud();
-        return;
+        await loadFromCloud(); return;
       }
     }
   }catch(e){}
-  // token無效，清除
   try{localStorage.removeItem('sb_token');localStorage.removeItem('sb_email');}catch(e){}
 })();
 </script>
