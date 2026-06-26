@@ -71,6 +71,15 @@
   .who .p{padding:8px 14px;border:1px solid var(--line);border-radius:20px;font-size:14px;background:#fff;cursor:pointer;}
   .who .p.on{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600;}
   .who .allbtn{padding:8px 14px;border:1px dashed var(--blue);color:var(--blue);border-radius:20px;font-size:14px;font-weight:600;background:#fff;cursor:pointer;}
+  /* 多人墊付金額列 */
+  .payinfo{font-size:13px;font-weight:700;}
+  .payinfo.ok{color:var(--green);}
+  .payinfo.bad{color:var(--red);}
+  .payrow{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .payrow .pn{flex:1;font-size:15px;font-weight:600;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .payrow input{width:120px;flex:none;padding:10px;border:1px solid var(--line);border-radius:10px;font-size:16px;text-align:right;background:#fff;color:var(--ink);}
+  .pay-tools{display:flex;gap:8px;margin-top:10px;}
+  .pay-tools .allbtn{padding:7px 14px;border:1px dashed var(--blue);color:var(--blue);border-radius:20px;font-size:14px;font-weight:600;background:#fff;cursor:pointer;}
   .btn{width:100%;padding:14px;border:none;border-radius:12px;font-size:17px;font-weight:700;margin-top:18px;cursor:pointer;}
   .btn.pri{background:var(--blue);color:#fff;}
   .btn.gho{background:#f3f4f6;color:var(--ink);margin-top:8px;}
@@ -166,7 +175,6 @@
 </style>
 </head>
 <body>
-
 <!-- 登入頁 -->
 <div id="loginPage">
   <div class="logo">🍃</div>
@@ -179,7 +187,6 @@
   <div class="switch" onclick="toggleMode()">還沒有帳號？<b>立即註冊</b></div>
   <div class="switch" style="margin-top:10px" onclick="doForgot()">忘記密碼？<b>重設</b></div>
 </div>
-
 <header>
   <div class="h-top">
     <select id="tripSel" onchange="switchTrip(this.value)"></select>
@@ -192,7 +199,6 @@
   </div>
   <div id="userBar"><span id="userEmail"></span><span class="sync-dot" id="syncDot"></span></div>
 </header>
-
 <main>
   <div class="card">
     <h2>參與的人</h2>
@@ -214,9 +220,7 @@
     <div id="history"></div>
   </div>
 </main>
-
 <button class="fab" onclick="openItem()">＋ 記一筆</button>
-
 <!-- 結算卡片 -->
 <div id="cardMask" onclick="if(event.target===this)this.classList.remove('on')">
   <div id="cardWrapper">
@@ -249,7 +253,6 @@
     </div>
   </div>
 </div>
-
 <!-- 新增/編輯 消費 -->
 <div class="mask" id="mItem">
   <div class="sheet">
@@ -260,16 +263,16 @@
     <label class="f">備註（選填）</label>
     <textarea class="f" id="iNote" placeholder="例如：在 MBK 吃的、Grab 車資"></textarea>
     <label class="f">金額　<span id="amtPreview" style="color:var(--blue);font-weight:700;font-size:14px"></span></label>
-    <input class="f" id="iAmt" type="text" inputmode="text" placeholder="例如 50+83 或 200-30" oninput="previewAmt()">
-    <label class="f">誰先付的錢（墊付人）</label>
-    <select class="f" id="iPayer"></select>
+    <input class="f" id="iAmt" type="text" inputmode="text" placeholder="例如 50+83 或 200-30" oninput="onAmtInput()">
+    <label class="f">誰先付的錢（可多人）<span id="payInfo" class="payinfo" style="float:right"></span></label>
+    <div class="who" id="iPayWho"></div>
+    <div id="iPayRows"></div>
     <label class="f">這筆由誰分攤（平均分）</label>
     <div class="who" id="iWho"></div>
     <button class="btn pri" onclick="saveItem()">儲存</button>
     <button class="btn gho" onclick="close_('mItem')">取消</button>
   </div>
 </div>
-
 <!-- 菜單 -->
 <div class="mask" id="mMenu">
   <div class="sheet">
@@ -282,7 +285,6 @@
     <button class="btn gho" onclick="close_('mMenu')">關閉</button>
   </div>
 </div>
-
 <!-- 自訂對話框 -->
 <div class="dlg-mask" id="dlgMask">
   <div class="dlg">
@@ -295,19 +297,16 @@
     </div>
   </div>
 </div>
-
 <script>
 const SB_URL='https://xzmugwhduswltmydzcxs.supabase.co';
 const SB_KEY='sb_publishable_BjOgs6fhvzn1C3XYAFa0UA_eUG72R6O';
 let sbToken=null, sbUserId=null, sbUserEmail='';
 let isRegMode=false;
-
 async function sbFetch(path, opts={}){
   const headers={'Content-Type':'application/json','apikey':SB_KEY,...(sbToken?{'Authorization':'Bearer '+sbToken}:{}),...(opts.headers||{})};
   const res=await fetch(SB_URL+path,{...opts,headers});
   return res;
 }
-
 function toggleMode(){
   isRegMode=!isRegMode;
   document.getElementById('lBtn').textContent=isRegMode?'註冊':'登入';
@@ -315,7 +314,6 @@ function toggleMode(){
   document.querySelector('#loginPage .switch').innerHTML=isRegMode?'已有帳號？<b>直接登入</b>':'還沒有帳號？<b>立即註冊</b>';
   document.getElementById('lErr').textContent='';
 }
-
 async function doForgot(){
   const email=document.getElementById('lEmail').value.trim();
   if(!email){document.getElementById('lErr').textContent='請先輸入 Email';return;}
@@ -325,7 +323,6 @@ async function doForgot(){
     document.getElementById('lErr').textContent='重設信已寄出，請檢查信箱';
   }catch(e){document.getElementById('lErr').textContent='寄送失敗，請稍後再試';}
 }
-
 async function doLogin(){
   const email=document.getElementById('lEmail').value.trim();
   const pass=document.getElementById('lPass').value;
@@ -351,7 +348,6 @@ async function doLogin(){
   }catch(e){errEl.textContent='網路錯誤，請稍後再試';}
   document.getElementById('lBtn').textContent=isRegMode?'註冊':'登入';
 }
-
 async function doLogout(){
   sbToken=null; sbUserId=null;
   try{localStorage.removeItem('sb_token');localStorage.removeItem('sb_email');}catch(e){}
@@ -360,9 +356,7 @@ async function doLogout(){
   document.getElementById('lPass').value='';
   close_('mMenu');
 }
-
 function setSyncDot(state){document.getElementById('syncDot').className='sync-dot '+state;}
-
 async function loadFromCloud(){
   setSyncDot('ing');
   try{
@@ -377,7 +371,6 @@ async function loadFromCloud(){
     cur=db.trips[0]; render(); setSyncDot('ok');
   }catch(e){setSyncDot('err');db={cur:0,trips:[blankTrip('我的出遊')]};cur=db.trips[0];render();}
 }
-
 async function saveToCloud(trip){
   setSyncDot('ing');
   try{
@@ -391,34 +384,44 @@ async function saveToCloud(trip){
     setSyncDot('ok');
   }catch(e){setSyncDot('err');}
 }
-
 async function deleteFromCloud(trip){
   if(!trip.id)return;
   await sbFetch('/rest/v1/split_trips?id=eq.'+trip.id,{method:'DELETE'});
 }
-
 let db,cur,editId=null,selWho=[];
+let selPay=[], payAmt={}; // 多人墊付：選到的人 + 各自金額
 const QUICK=['交通','午餐','晚餐','早餐','咖啡','甜點'];
-
 function blankTrip(name){return{name,cur:'THB',date:today(),people:[],items:[]};}
 function uid(){return Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);}
 function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
 function fmtTime(ts){if(!ts)return'';const d=new Date(ts);return(d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
 function money(n){return cur.cur+' '+(Math.round(n*10)/10).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:1});}
+function num1(n){return Math.round(n*10)/10;}
 function tripTotal(t){return t.items.reduce((s,i)=>s+(+i.amount||0),0);}
 function save(){saveToCloud(cur);}
-
+/* 把任一筆消費的墊付資料正規化成 [{name,amount}]，相容舊的單一 payer 欄位 */
+function normalizePayers(it){
+  if(Array.isArray(it.payers)&&it.payers.length) return it.payers.map(p=>({name:p.name,amount:+p.amount||0}));
+  if(it.payer) return [{name:it.payer,amount:+it.amount||0}];
+  return [];
+}
+/* 顯示用的墊付文字。withAmt=true 時多人會帶金額 */
+function payersLabel(it,withAmt){
+  const ps=normalizePayers(it).filter(p=>!cur||cur.people.includes(p.name));
+  if(!ps.length) return '—';
+  if(ps.length===1) return ps[0].name;
+  return ps.map(p=>p.name+(withAmt?' '+num1(p.amount):'')).join('、');
+}
 function calc(){
   const r={};cur.people.forEach(p=>r[p]={share:0,paid:0});
   cur.items.forEach(it=>{
     const sh=(it.sharedBy||[]).filter(p=>cur.people.includes(p));
     if(sh.length){const per=it.amount/sh.length;sh.forEach(p=>r[p].share+=per);}
-    if(it.payer&&r[it.payer])r[it.payer].paid+=it.amount;
+    normalizePayers(it).forEach(pp=>{if(r[pp.name])r[pp.name].paid+=pp.amount;});
   });
   cur.people.forEach(p=>r[p].bal=r[p].paid-r[p].share);
   return r;
 }
-
 function settlements(r){
   const cred=[],deb=[];
   cur.people.forEach(p=>{const b=Math.round(r[p].bal*100)/100;if(b>0.009)cred.push({p,v:b});else if(b<-0.009)deb.push({p,v:-b});});
@@ -432,7 +435,6 @@ function settlements(r){
   }
   return out;
 }
-
 function render(){
   const sel=document.getElementById('tripSel');
   sel.innerHTML=db.trips.map((t,i)=>`<option value="${i}" ${i===db.cur?'selected':''}>${esc(t.name)}</option>`).join('');
@@ -442,8 +444,9 @@ function render(){
   if(!cur.items.length){ic.innerHTML='<div class="empty">還沒有消費記錄，點下方「記一筆」開始</div>';}
   else ic.innerHTML=cur.items.map(it=>{
     const sh=(it.sharedBy||[]);const per=sh.length?it.amount/sh.length:0;
+    const payTxt=esc(payersLabel(it,true));
     return `<div class="item"><div class="row1"><div class="nm">${esc(it.name)}</div><div class="amt">${money(it.amount)}</div></div>
-      <div class="meta">墊付：<b>${esc(it.payer||'—')}</b> ・ 分攤：${sh.map(esc).join('、')||'—'} ${sh.length>1?`（每人 ${money(per)}）`:''}</div>
+      <div class="meta">墊付：<b>${payTxt}</b> ・ 分攤：${sh.map(esc).join('、')||'—'} ${sh.length>1?`（每人 ${money(per)}）`:''}</div>
       ${it.note?`<div class="time">📝 ${esc(it.note)}</div>`:''}
       ${it.ts?`<div class="time">🕒 ${fmtTime(it.ts)}</div>`:''}
       <div class="acts"><span onclick="openItem('${it.id}')">✏️ 編輯</span><span class="del" onclick="delItem('${it.id}')">🗑 刪除</span></div></div>`;
@@ -469,11 +472,9 @@ function render(){
 }
 function esc(s){return(s+'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function unesc(s){return(s+'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
-
 function open_(id){document.getElementById(id).classList.add('on');}
 function close_(id){document.getElementById(id).classList.remove('on');}
 function openMenu(){open_('mMenu');}
-
 let dlgResolve=()=>{};
 function showDlg({title='',msg='',input=false,inputVal='',okText='確定',okDanger=false,showCancel=true}){
   return new Promise(res=>{
@@ -503,50 +504,93 @@ document.getElementById('dlgCancel').addEventListener('click',()=>{
 async function myAlert(title,msg=''){await showDlg({title,msg,showCancel:false,okText:'好'});}
 async function myConfirm(title,msg=''){return await showDlg({title,msg,okText:'確定',okDanger:true});}
 async function myPrompt(title,defaultVal=''){return await showDlg({title,input:true,inputVal:defaultVal,okText:'確定'});}
-
 function renderQuickTags(){
   const v=document.getElementById('iName').value.trim();
   document.getElementById('quickTags').innerHTML=QUICK.map(t=>`<div class="quick-tag ${v===t?'on':''}" onclick="pickTag('${t}')">${t}</div>`).join('');
 }
 function pickTag(t){const inp=document.getElementById('iName');inp.value=inp.value.trim()===t?'':t;renderQuickTags();}
-
+function curAmt(){return parseAmt(document.getElementById('iAmt').value)||0;}
 function previewAmt(){
   const v=document.getElementById('iAmt').value.trim();
   const el=document.getElementById('amtPreview');
   if(!v){el.textContent='';return;}
-  try{
-    const safe=v.replace(/[^0-9+\-*/.]/g,'');
-    const result=Function('"use strict";return ('+safe+')')();
-    if(isFinite(result)&&result>0){el.textContent='= '+Math.round(result*100)/100;}
-    else{el.textContent='';}
-  }catch(e){el.textContent='';}
+  const result=parseAmt(v);
+  if(isFinite(result)&&result>0){el.textContent='= '+Math.round(result*100)/100;}
+  else{el.textContent='';}
 }
 function parseAmt(v){
   try{
-    const safe=v.replace(/[^0-9+\-*/.]/g,'');
+    const safe=(v+'').replace(/[^0-9+\-*/.]/g,'');
     const result=Function('"use strict";return ('+safe+')')();
     return isFinite(result)?result:NaN;
   }catch(e){return NaN;}
 }
-
+/* 金額改變時：單人墊付自動帶全額；更新檢核資訊（不覆蓋多人手動金額） */
+function onAmtInput(){
+  previewAmt();
+  if(selPay.length===1){payAmt[selPay[0]]=curAmt();}
+  updatePayInfo();
+}
+/* ---- 多人墊付 UI ---- */
+function renderPayers(){
+  document.getElementById('iPayWho').innerHTML=cur.people.map(p=>`<div class="p ${selPay.includes(p)?'on':''}" onclick="togPayer('${esc(p)}')">${esc(p)}</div>`).join('')||'<div class="empty" style="padding:6px 0">先在上方新增人員</div>';
+  renderPayRows();
+}
+function togPayer(p){
+  p=unesc(p);
+  if(selPay.includes(p)){selPay=selPay.filter(x=>x!==p);delete payAmt[p];}
+  else{selPay.push(p);payAmt[p]=0;}
+  distributePay();   // 切換成員後預設平均，使用者可再手動改
+  renderPayers();
+}
+function distributePay(){
+  const total=curAmt();
+  if(selPay.length===0)return;
+  if(selPay.length===1){payAmt[selPay[0]]=total;return;}
+  const per=Math.round(total/selPay.length*100)/100;
+  let acc=0;
+  selPay.forEach((p,i)=>{
+    if(i===selPay.length-1){payAmt[p]=Math.round((total-acc)*100)/100;}
+    else{payAmt[p]=per;acc+=per;}
+  });
+}
+function renderPayRows(){
+  const box=document.getElementById('iPayRows');
+  if(selPay.length<=1){box.innerHTML='';updatePayInfo();return;}
+  box.innerHTML=selPay.map(p=>`<div class="payrow"><span class="pn">${esc(p)}</span><input type="text" inputmode="decimal" value="${payAmt[p]||''}" oninput="setPayAmt('${esc(p)}',this.value)"></div>`).join('')
+    +`<div class="pay-tools"><span class="allbtn" onclick="distributePay();renderPayRows()">平均分</span></div>`;
+  updatePayInfo();
+}
+function setPayAmt(p,v){p=unesc(p);payAmt[p]=parseAmt(v)||0;updatePayInfo();}
+function updatePayInfo(){
+  const el=document.getElementById('payInfo');
+  if(selPay.length<=1){el.textContent='';el.className='payinfo';return;}
+  const total=curAmt();
+  const sum=selPay.reduce((s,p)=>s+(payAmt[p]||0),0);
+  const ok=Math.abs(sum-total)<0.01;
+  el.className='payinfo '+(ok?'ok':'bad');
+  el.textContent='已分配 '+num1(sum)+' / '+num1(total)+(ok?' ✓':'');
+}
 function openItem(id){
   if(!cur.people.length){myAlert('請先新增人員','請先在上方新增參與的人');return;}
   editId=id||null;
-  const payer=document.getElementById('iPayer');
-  payer.innerHTML='<option value="">（暫不設定）</option>'+cur.people.map(p=>`<option value="${esc(p)}">${esc(p)}</option>`).join('');
   if(id){
     const it=cur.items.find(x=>x.id===id);
     document.getElementById('itemTitle').textContent='編輯';
-    iName.value=it.name;iAmt.value=it.amount;payer.value=it.payer||'';
+    iName.value=it.name;iAmt.value=it.amount;
     document.getElementById('iNote').value=it.note||'';
     selWho=[...(it.sharedBy||[])];
+    const pl=normalizePayers(it).filter(p=>cur.people.includes(p.name));
+    selPay=pl.map(p=>p.name);
+    payAmt={}; pl.forEach(p=>{payAmt[p.name]=p.amount;});
   }else{
     document.getElementById('itemTitle').textContent='記一筆';
-    iName.value='';iAmt.value='';payer.value='';
+    iName.value='';iAmt.value='';
     document.getElementById('iNote').value='';
     selWho=[...cur.people];
+    selPay=[]; payAmt={};
   }
-  renderQuickTags();renderWho();open_('mItem');
+  previewAmt();renderQuickTags();renderWho();renderPayers();open_('mItem');
   setTimeout(()=>iName.focus(),200);
 }
 function renderWho(){
@@ -559,16 +603,30 @@ async function saveItem(){
   if(!name){await myAlert('請輸入項目名稱');return;}
   if(!(amt>0)){await myAlert('請輸入正確金額');return;}
   if(!selWho.length){await myAlert('請至少選一個分攤的人');return;}
-  const payer=document.getElementById('iPayer').value;
+  // 整理墊付人
+  let payers=[];
+  if(selPay.length===1){
+    payers=[{name:selPay[0],amount:Math.round(amt*100)/100}];
+  }else if(selPay.length>1){
+    payers=selPay.map(p=>({name:p,amount:Math.round((payAmt[p]||0)*100)/100}));
+    const sum=payers.reduce((s,p)=>s+p.amount,0);
+    if(Math.abs(sum-amt)>0.01){
+      await myAlert('墊付金額不符','各墊付人加總需等於 '+(Math.round(amt*100)/100)+'，目前為 '+(Math.round(sum*100)/100)+'。可按「平均分」自動填入。');
+      return;
+    }
+  }
   const note=document.getElementById('iNote').value.trim();
-  if(editId){const it=cur.items.find(x=>x.id===editId);it.name=name;it.amount=amt;it.payer=payer;it.sharedBy=[...selWho];it.note=note;}
-  else{cur.items.push({id:uid(),name,amount:amt,payer,sharedBy:[...selWho],note,ts:Date.now()});}
+  if(editId){
+    const it=cur.items.find(x=>x.id===editId);
+    it.name=name;it.amount=amt;it.payers=payers;delete it.payer;it.sharedBy=[...selWho];it.note=note;
+  }else{
+    cur.items.push({id:uid(),name,amount:amt,payers,sharedBy:[...selWho],note,ts:Date.now()});
+  }
   save();render();close_('mItem');
 }
 async function delItem(id){
   if(await myConfirm('確定刪除？','這筆消費將被移除')){cur.items=cur.items.filter(x=>x.id!==id);save();render();}
 }
-
 async function quickAdd(){
   const el=document.getElementById('pQuick');
   const n=el.value.trim();
@@ -580,11 +638,14 @@ async function delPerson(p){
   p=unesc(p);
   if(!await myConfirm('移除 '+p+'？','相關消費裡的分攤/墊付會一併清除'))return;
   cur.people=cur.people.filter(x=>x!==p);
-  cur.items.forEach(it=>{it.sharedBy=(it.sharedBy||[]).filter(x=>x!==p);if(it.payer===p)it.payer='';});
+  cur.items.forEach(it=>{
+    it.sharedBy=(it.sharedBy||[]).filter(x=>x!==p);
+    if(it.payer===p)it.payer='';
+    if(Array.isArray(it.payers))it.payers=it.payers.filter(x=>x.name!==p);
+  });
   cur.items=cur.items.filter(it=>(it.sharedBy||[]).length);
   save();render();
 }
-
 function switchTrip(i){db.cur=+i;cur=db.trips[db.cur];render();window.scrollTo({top:0,behavior:'smooth'});}
 async function newTrip(){
   const n=await myPrompt('新行程名稱','出遊 '+(db.trips.length+1));
@@ -607,30 +668,27 @@ async function delTrip(){
   await deleteFromCloud(cur);
   db.trips.splice(db.cur,1);db.cur=0;cur=db.trips[0];render();close_('mMenu');
 }
-
 /* ---- 結算卡片 ---- */
 function showCard(){
   const r=calc();
   const st=settlements(r);
   const total=tripTotal(cur);
   const fmt=n=>cur.cur+' '+Math.round(n).toLocaleString();
-
   document.getElementById('cTitle').textContent=cur.name;
   document.getElementById('cDate').textContent=cur.date||'';
   document.getElementById('cTotal').textContent='總花費 '+fmt(total);
-
   document.getElementById('cItems').innerHTML=cur.items.length?cur.items.map(it=>{
     const sh=(it.sharedBy||[]);
     const per=sh.length?Math.round(it.amount/sh.length*10)/10:0;
+    const payTxt=payersLabel(it,true);
     return `<div class="card-row">
       <div class="lft">
         <div class="nm">${esc(it.name)}${it.note?` <span style="font-weight:400;color:#aaa;font-size:12px">· ${esc(it.note)}</span>`:''}</div>
-        <div class="sub">${it.payer?esc(it.payer)+'墊付':''} ${sh.length?'· '+sh.map(esc).join('、')+'分攤':''} ${sh.length>1?'· 每人 '+cur.cur+' '+per:''}</div>
+        <div class="sub">${payTxt!=='—'?esc(payTxt)+'墊付':''} ${sh.length?'· '+sh.map(esc).join('、')+'分攤':''} ${sh.length>1?'· 每人 '+cur.cur+' '+per:''}</div>
       </div>
       <div class="val">${cur.cur} ${it.amount}</div>
     </div>`;
   }).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無消費記錄</div>';
-
   document.getElementById('cPersons').innerHTML=cur.people.map(p=>{
     const b=r[p].bal;
     const cls=b>0.01?'grn':(b<-0.01?'red':'gry');
@@ -640,16 +698,13 @@ function showCard(){
       <div class="val ${cls}">${tag}</div>
     </div>`;
   }).join('');
-
   document.getElementById('cSettle').innerHTML=st.length?st.map(s=>`
     <div class="settle-row">
       <span class="from">${esc(s.from)}</span><span class="arrow">→</span><span class="to">${esc(s.to)}</span>
       <span class="samt">${fmt(s.amt)}</span>
     </div>`).join(''):'<div style="color:#aaa;font-size:13px;padding:6px 0">無需結算</div>';
-
   document.getElementById('cardMask').classList.add('on');
 }
-
 async function doShareText(){
   const r=calc();
   const st=settlements(r);
@@ -661,8 +716,9 @@ async function doShareText(){
   txt+='\n📋 消費明細\n';
   cur.items.forEach(it=>{
     const sh=(it.sharedBy||[]);
+    const payTxt=payersLabel(it,true);
     txt+='• '+it.name+' '+it.amount;
-    if(it.payer) txt+='｜'+it.payer+'墊';
+    if(payTxt!=='—') txt+='｜'+payTxt+'墊';
     if(sh.length) txt+='｜'+sh.join('、')+'分';
     if(it.note) txt+='｜'+it.note;
     txt+='\n';
@@ -684,7 +740,6 @@ async function doShareText(){
     myAlert('已複製','可貼到 LINE / WhatsApp');
   }
 }
-
 async function doShare(){
   if(navigator.share){
     const r=calc();
@@ -696,10 +751,8 @@ async function doShare(){
     await myAlert('截圖分享','長按畫面截圖，再分享給朋友 📸');
   }
 }
-
 document.querySelectorAll('.mask').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('on');}));
 document.getElementById('lPass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
-
 (async()=>{
   try{
     const token=localStorage.getItem('sb_token');
